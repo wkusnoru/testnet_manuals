@@ -4,7 +4,7 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/165055511-83e8a2d3-1700-4d26-af27-abcc825573a7.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/171904810-664af00a-e78a-4602-b66b-20bfd874fa82.png">
 </p>
 
 # Set up monitoring and alerting for defund validator
@@ -71,7 +71,7 @@ source $HOME/.bash_profile
 ### Add validator into _prometheus_ configuration file
 To add validator use command with specified `VALIDATOR_IP`, `WALLET_ADDRESS`, `VALOPER_ADDRESS` and `PROJECT_NAME`
 ```
-$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP WALLET_ADDRESS VALOPER_ADDRESS PROJECT_NAME
+$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP VALOPER_ADDRESS WALLET_ADDRESS PROJECT_NAME
 ```
 
 > example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 defundvaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete defund1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc defund```

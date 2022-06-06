@@ -9,6 +9,9 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 
 # Masa node setup
 
+Official documentation:
+- https://github.com/masa-finance/masa-node-v1.0
+
 ## Minimal hardware requirements
 - CPU: 1 core
 - Memory: 2 GB RAM
@@ -30,6 +33,17 @@ You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/
 You have to see blocks comming
 ```
 journalctl -u masad -f | grep "new block"
+```
+
+### Get masa node key
+!Please make sure you backup your `node key` somewhere safe. Its the only way to restore your node!
+```
+cat $HOME/masa-node-v1.0/data/geth/nodekey
+```
+
+### Get masa enode id
+```
+geth attach ipc:$HOME/masa-node-v1.0/data/geth.ipc --exec web3.admin.nodeInfo.enode | sed 's/^.//;s/.$//'
 ```
 
 ### Restart service
@@ -65,11 +79,10 @@ net.peerCount
 
 _Press CTRL+D to exit_
 
-### Backup node key
-Please backup masa node key
-```
-cat $HOME/masa-node-v1.0/data/geth/nodekey
-```
-
 ### Restore node key
-To restore masa node key just insert it into _$HOME/masa-node-v1.0/data/geth/nodekey_ and restart service afterwards
+To restore masa node key just insert it into _$HOME/masa-node-v1.0/data/geth/nodekey_ and restart service afterwards\
+Replace `<YOUR_NODE_KEY>` with your node key and run command below
+```
+echo <YOUR_NODE_KEY> > $HOME/masa-node-v1.0/data/geth/nodekey
+systemctl restart masad.service
+```

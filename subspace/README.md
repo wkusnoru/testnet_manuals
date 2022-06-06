@@ -12,6 +12,11 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 Official documentation:
 - Official manual: https://github.com/subspace/subspace/blob/main/docs/farming.md
 
+## Minimum Specifications
+- CPU: 2 CPU
+- Memory: 4 GB RAM
+- Disk: 50 GB SSD Storage
+
 ## Recommended hardware requirements
 - CPU: 4 CPU
 - Memory: 8 GB RAM
@@ -28,15 +33,29 @@ To create polkadot wallet:
 3. Save `mnemonic` and create wallet
 4. This will generate wallet address that you will have to use later. Example of wallet address: `st7QseTESMmUYcT5aftRJZ3jg357MsaAa93CFQL5UKsyGEk53`
 
-## Set up your Subspace node
+## Set up your Subspace full node
+Full node doesn't store the history and state of the whole blockchain, only last 1024 blocks
 ### Option 1 (automatic)
-You can setup your Subspace node in few minutes by using automated script below
+You can setup your Subspace full node in few minutes by using automated script below
 ```
-wget -O subspace_testnet.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/subspace/subspace_testnet.sh && chmod +x subspace_testnet.sh && ./subspace_testnet.sh
+wget -O subspace_fullnode.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/subspace/subspace_fullnode.sh && chmod +x subspace_fullnode.sh && ./subspace_fullnode.sh
 ```
 
 ### Option 2 (manual)
-You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/subspace/manual_install.md) if you better prefer setting up node manually
+You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/subspace/manual_install_fullnode.md) if you better prefer setting up node manually
+
+## Set up your Subspace archival node
+Archival node store the full history and state of the blockchain. It is useful if you run an RPC node and want to support querying older blockchain history.
+### Option 1 (automatic)
+You can setup your Subspace archival node in few minutes by using automated script below
+```
+wget -O subspace_archival.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/subspace/subspace_archival.sh && chmod +x subspace_archival.sh && ./subspace_archival.sh
+```
+
+### Option 2 (manual)
+You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/subspace/manual_install_archival.md) if you better prefer setting up node manually
+
+> NOTE: you cannot convert your existing node to an archival node, so you need to start a new one (100G+ of space suggested). You will still participate in the farming process as an archival node.
 
 ## Check you node in the telemetry
 When you have finished setting up your node and farmer:
@@ -46,7 +65,36 @@ When you have finished setting up your node and farmer:
 
 ![image](https://user-images.githubusercontent.com/50621007/171700021-8997d43b-408f-4275-982f-60896b0df8fb.png)
 
+## Update the node
+To upgrade your node to new binaries, please run the coommand below:
+```
+cd $HOME && rm -rf subspace-*
+APP_VERSION=$(curl -s https://api.github.com/repos/subspace/subspace/releases/latest | jq -r ".tag_name")
+wget -O subspace-node https://github.com/subspace/subspace/releases/download/${APP_VERSION}/subspace-node-ubuntu-x86_64-${APP_VERSION}
+wget -O subspace-farmer https://github.com/subspace/subspace/releases/download/${APP_VERSION}/subspace-farmer-ubuntu-x86_64-${APP_VERSION}
+chmod +x subspace-*
+mv subspace-* /usr/local/bin/
+systemctl restart subspaced
+sleep 30
+systemctl restart subspaced-farmer
+```
+
+## Reset the node
+If you were running a node previously, and want to switch to a new snapshot, please perform these steps and then follow the guideline again:
+```
+subspace-farmer wipe
+subspace-node purge-chain --chain gemini-1 -y
+systemctl restart subspaced
+sleep 30
+systemctl restart subspaced-farmer
+```
+
 ## Usefull commands
+Check node and farmer version
+```
+subspace-farmer --version && subspace-node --version
+```
+
 Check node status
 ```
 service subspaced status
