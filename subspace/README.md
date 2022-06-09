@@ -11,6 +11,8 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 
 Official documentation:
 - Official manual: https://github.com/subspace/subspace/blob/main/docs/farming.md
+- Telemetry: https://telemetry.subspace.network/#list/0x9ee86eefc3cc61c71a7751bba7f25e442da2512f408e6286153b3ccc055dccf0
+- Block explorer: https://polkadot.js.org/apps/?rpc=wss%3A%2F%2Fna.gemini-1b.subspace.network%2Fws#/explorer
 
 ## Minimum Specifications
 - CPU: 2 CPU
@@ -51,6 +53,12 @@ When you have finished setting up your node and farmer:
 3. You should see yourself in the list like in the image below
 
 ![image](https://user-images.githubusercontent.com/50621007/171700021-8997d43b-408f-4275-982f-60896b0df8fb.png)
+
+## Check your node synchronization
+If output is `false` your node is synchronized
+```
+curl -s -X POST http://localhost:9933 -H "Content-Type: application/json" --data '{"id":1, "jsonrpc":"2.0", "method": "system_health", "params":[]}' | jq .result.isSyncing
+```
 
 ## Update the node
 To upgrade your node to new binaries, please run the coommand below:
@@ -129,6 +137,7 @@ To delete node
 ```
 sudo systemctl stop subspaced subspaced-farmer
 sudo systemctl disable subspaced subspaced-farmer
+rm -rf ~/.local/share/subspace*
 rm -rf /etc/systemd/system/subspaced*
 rm -rf /usr/local/bin/subspace*
 ```

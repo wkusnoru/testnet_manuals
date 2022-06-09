@@ -4,10 +4,10 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/169664551-39020c2e-fa95-483b-916b-c52ce4cb907c.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/172356220-b8326ceb-9950-4226-b66e-da69099aaf6e.png">
 </p>
 
-# Set up monitoring and alerting for sei validator
+# Set up monitoring and alerting for kujira validator
 
 ## Prerequisites
 
@@ -19,8 +19,8 @@ wget -O install_exporters.sh https://raw.githubusercontent.com/kj89/cosmos_node_
 
 | KEY |VALUE |
 |---------------|-------------|
-| **bond_denom** | Denominated token name, for example, `usei` for sei testnet. You can find it in genesis file |
-| **bench_prefix** | Prefix for chain addresses, for example, `cosmos` for sei testnet. You can find it in public addresses like this **cosmos**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
+| **bond_denom** | Denominated token name, for example, `ukuji` for kujira kujira testnet. You can find it in genesis file |
+| **bench_prefix** | Prefix for chain addresses, for example, `kujira` for kujira kujira testnet. You can find it in public addresses like this **kujira**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
 
 make sure following ports are open:
 - `9100` (node-exporter)
@@ -31,7 +31,7 @@ prometheus metrics should be `enabled` and port `26660` should be available on v
 To enable prometheus you have to run command below and after that please restart service to apply changes
 ```
 # enable prometheus
-sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.sei/config/config.toml
+sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.kujira/config/config.toml
 ```
 
 ## Deployment
@@ -74,7 +74,7 @@ To add validator use command with specified `VALIDATOR_IP`, `WALLET_ADDRESS`, `V
 $HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP VALOPER_ADDRESS WALLET_ADDRESS PROJECT_NAME
 ```
 
-> example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 cosmosvaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete cosmos1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc sei```
+> example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 kujiravaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete kujira1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc kujira```
 
 To add more validators just run command above with validator values
 

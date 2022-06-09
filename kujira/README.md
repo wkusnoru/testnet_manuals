@@ -4,31 +4,49 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/167032367-fee4380e-7678-43e0-9206-36d72b32b8ae.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/172356220-b8326ceb-9950-4226-b66e-da69099aaf6e.png">
 </p>
 
-# agoric node setup for mainnet — agoric-3
+# kujira node setup for Testnet — harpoon-3
 
+Official documentation:
+>- [Validator setup instructions](https://docs.kujira.app/run-a-node)
 
 Explorer:
-> https://agoric.explorers.guru
+>-  https://kujira.explorers.guru/
 
 ## Usefull tools and references
-> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for agoric validator](https://github.com/kj89/testnet_manuals/blob/main/agoric/monitoring/README.md)
+> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for kujira validator](https://github.com/kj89/testnet_manuals/blob/main/kujira/monitoring/README.md)
 >
-> To migrate your valitorator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/agoric/migrate_validator.md)
+> To migrate your valitorator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/kujira/migrate_validator.md)
 
-## Set up your agoric fullnode
+## Hardware Requirements
+Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
+
+### Minimum Hardware Requirements
+ - 3x CPUs; the faster clock speed the better
+ - 4GB RAM
+ - 80GB Disk
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+
+### Optimal Hardware Requirements 
+ - 4x CPUs; the faster clock speed the better
+ - 8GB RAM
+ - 200GB of storage (SSD or NVME)
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+
+## Set up your kujira fullnode
 ### Option 1 (automatic)
-You can setup your agoric fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
+You can setup your kujira fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
 ```
-wget -O agoric_mainnet.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/agoric/mainnet/agoric_mainnet.sh && chmod +x agoric_mainnet.sh && ./agoric_mainnet.sh
+wget -O kujira.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/kujira/kujira.sh && chmod +x kujira.sh && ./kujira.sh
 ```
 
 ### Option 2 (manual)
-You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/agoric/manual_devnet_install.md) if you better prefer setting up node manually
+You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/kujira/manual_install.md) if you better prefer setting up node manually
 
-### Post installation
+## Post installation
+
 When installation is finished please load variables into system
 ```
 source $HOME/.bash_profile
@@ -36,34 +54,34 @@ source $HOME/.bash_profile
 
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 ```
-ag0 status 2>&1 | jq .SyncInfo
+kujirad status 2>&1 | jq .SyncInfo
 ```
 
 ### Create wallet
 To create new wallet you can use command below. Don’t forget to save the mnemonic
 ```
-ag0 keys add $WALLET
+kujirad keys add $WALLET
 ```
 
 (OPTIONAL) To recover your wallet using seed phrase
 ```
-ag0 keys add $WALLET --recover
+kujirad keys add $WALLET --recover
 ```
 
 To get current list of wallets
 ```
-ag0 keys list
+kujirad keys list
 ```
 
 ### Save wallet info
 Add wallet address
 ```
-WALLET_ADDRESS=$(ag0 keys show $WALLET -a)
+WALLET_ADDRESS=$(kujirad keys show $WALLET -a)
 ```
 
 Add valoper address
 ```
-VALOPER_ADDRESS=$(ag0 keys show $WALLET --bech val -a)
+VALOPER_ADDRESS=$(kujirad keys show $WALLET --bech val -a)
 ```
 
 Load variables into system
@@ -73,31 +91,31 @@ echo 'export VALOPER_ADDRESS='${VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
-### Top up your wallet balance using faucet
-To get free tokens in agoricdev-11 testnet:
-* navigate to [Agoric official discord](https://agoric.com/discord)
-* open `#faucet` channel under `DEVELOPMENT` category 
-* input command: `!faucet client <WALLET_ADDRESS>`
+### Fund your wallet
+In order to create validator first you need to fund your wallet with testnet tokens
+```
+curl -X POST https://faucet.kujira.app/$WALLET_ADDRESS
+```
 
 ### Create validator
-Before creating validator please make sure that you have at least 1 bld (1 bld is equal to 1000000 ubld) and your node is synchronized
+Before creating validator please make sure that you have at least 1 kujira (1 kujira is equal to 1000000 ukuji) and your node is synchronized
 
 To check your wallet balance:
 ```
-ag0 query bank balances $WALLET_ADDRESS
+kujirad query bank balances $WALLET_ADDRESS
 ```
 > If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue 
 
 To create your validator run command below
 ```
-ag0 tx staking create-validator \
-  --amount 1000000ubld \
+kujirad tx staking create-validator \
+  --amount 100000000ukuji \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
   --commission-rate "0.07" \
   --min-self-delegation "1" \
-  --pubkey  $(ag0 show-validator) \
+  --pubkey  $(kujirad tendermint show-validator) \
   --moniker $NODENAME \
   --chain-id $CHAIN_ID
 ```
@@ -125,13 +143,13 @@ sudo ufw enable
 ```
 
 ## Monitoring
-To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for agoric validator](https://github.com/kj89/testnet_manuals/blob/main/agoric/monitoring/README.md)
+To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for kujira validator](https://github.com/kj89/testnet_manuals/blob/main/kujira/monitoring/README.md)
 
 ## Calculate synchronization time
 This script will help you to estimate how much time it will take to fully synchronize your node\
 It measures average blocks per minute that are being synchronized for period of 5 minutes and then gives you results
 ```
-wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/agoric/tools/synctime.py && python3 ./synctime.py
+wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/kujira/tools/synctime.py && python3 ./synctime.py
 ```
 
 ## Get currently connected peer list with ids
@@ -143,101 +161,101 @@ curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_inf
 ### Service management
 Check logs
 ```
-journalctl -fu ag0 -o cat
+journalctl -fu kujirad -o cat
 ```
 
 Start service
 ```
-systemctl start ag0
+systemctl start kujirad
 ```
 
 Stop service
 ```
-systemctl stop ag0
+systemctl stop kujirad
 ```
 
 Restart service
 ```
-systemctl restart ag0
+systemctl restart kujirad
 ```
 
 ### Node info
 Synchronization info
 ```
-ag0 status 2>&1 | jq .SyncInfo
+kujirad status 2>&1 | jq .SyncInfo
 ```
 
 Validator info
 ```
-ag0 status 2>&1 | jq .ValidatorInfo
+kujirad status 2>&1 | jq .ValidatorInfo
 ```
 
 Node info
 ```
-ag0 status 2>&1 | jq .NodeInfo
+kujirad status 2>&1 | jq .NodeInfo
 ```
 
 Show node id
 ```
-ag0 show-node-id
+kujirad tendermint show-node-id
 ```
 
 ### Wallet operations
 List of wallets
 ```
-ag0 keys list
+kujirad keys list
 ```
 
 Recover wallet
 ```
-ag0 keys add $WALLET --recover
+kujirad keys add $WALLET --recover
 ```
 
 Delete wallet
 ```
-ag0 keys delete $WALLET
+kujirad keys delete $WALLET
 ```
 
 Get wallet balance
 ```
-ag0 query bank balances $WALLET_ADDRESS
+kujirad query bank balances $WALLET_ADDRESS
 ```
 
 Transfer funds
 ```
-ag0 tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000ubld
+kujirad tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000ukuji
 ```
 
 ### Voting
 ```
-ag0 tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID
+kujirad tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-ag0 tx staking delegate $VALOPER_ADDRESS 10000000ubld --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+kujirad tx staking delegate $VALOPER_ADDRESS 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-ag0 tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ubld --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+kujirad tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
 ```
-ag0 tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+kujirad tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Withdraw rewards with commision
 ```
-ag0 tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
+kujirad tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
 ```
 
 ### Validator management
 Edit validator
 ```
-ag0 tx staking edit-validator \
+kujirad tx staking edit-validator \
 --moniker=$NODENAME \
 --identity=1C5ACD2EEF363C3A \
 --website="http://kjnodes.com" \
@@ -248,7 +266,7 @@ ag0 tx staking edit-validator \
 
 Unjail validator
 ```
-ag0 tx slashing unjail \
+kujirad tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
   --chain-id=$CHAIN_ID \
@@ -258,10 +276,10 @@ ag0 tx slashing unjail \
 ### Delete node
 This commands will completely remove node from server. Use at your own risk!
 ```
-systemctl stop ag0
-systemctl disable ag0
-rm /etc/systemd/system/ag0.service -rf
-rm $(which ag0) -rf
-rm $HOME/.agoric* -rf
-rm $HOME/ag0 -rf
+systemctl stop kujirad
+systemctl disable kujirad
+rm /etc/systemd/system/kujira* -rf
+rm $(which kujirad) -rf
+rm $HOME/.kujira* -rf
+rm $HOME/kujira-core -rf
 ```

@@ -82,7 +82,7 @@ To top up your wallet join [Uptick discord server](https://discord.gg/eStaNHZbm4
 
 To request a faucet grant:
 ```
-$request <YOUR_WALLET_ADDRESS>
+$faucet <YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
@@ -259,4 +259,15 @@ uptickd tx slashing unjail \
   --from=$WALLET \
   --chain-id=$CHAIN_ID \
   --gas=auto
+```
+
+### Delete node
+This commands will completely remove node from server. Use at your own risk!
+```
+systemctl stop uptickd
+systemctl disable uptickd
+rm /etc/systemd/system/uptick* -rf
+rm $(which uptickd) -rf
+rm $HOME/.uptick* -rf
+rm $HOME/uptick -rf
 ```

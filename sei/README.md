@@ -7,7 +7,7 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/169664551-39020c2e-fa95-483b-916b-c52ce4cb907c.png">
 </p>
 
-# Sei node setup for Testnet — sei-testnet-1
+# Sei node setup for Testnet — sei-testnet-2
 
 Official documentation:
 > [Validator setup instructions](https://docs.seinetwork.io/nodes-and-validators/joining-testnets)
@@ -94,19 +94,12 @@ source $HOME/.bash_profile
 ```
 
 ### Fund your wallet
-In order to create validator first you need to fund your wallet with testnet tokens.
+To top up your wallet join [Sei discord server](https://discord.gg/CSczWRVT) and navigate to **#testnet-faucet** channel
 
-#### Option 1
-A faucet server is running on the genesis node (3.22.112.181) of Sei testnet. To request tokens for your address, simply fire a HTTP request against the faucet server
+To request a faucet grant:
 ```
-curl -X POST -d '{"address": "'"$WALLET_ADDRESS"'", "coins": ["1000000usei"]}' http://3.22.112.181:8000
+!faucet <YOUR_WALLET_ADDRESS>
 ```
-
-#### Option 2
-To get 10000 free testnet tokens:
-* navigate to https://bitszn.com/faucets.html
-* switch to `COSMOS` tab and select `Sei Network Testnet`
-* input your wallet address and click `Request`
 
 ### Create validator
 Before creating validator please make sure that you have at least 1 sei (1 sei is equal to 1000000 usei) and your node is synchronized
@@ -275,4 +268,15 @@ seid tx slashing unjail \
   --from=$WALLET \
   --chain-id=$CHAIN_ID \
   --gas=auto --gas-adjustment 1.4
+```
+
+### Delete node
+This commands will completely remove node from server. Use at your own risk!
+```
+systemctl stop seid
+systemctl disable seid
+rm /etc/systemd/system/sei* -rf
+rm $(which seid) -rf
+rm $HOME/.sei -rf
+rm $HOME/sei-chain -rf
 ```

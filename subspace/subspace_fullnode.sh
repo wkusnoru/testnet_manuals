@@ -56,47 +56,53 @@ mv subspace-* /usr/local/bin/
 
 echo -e "\e[1m\e[32m4. Starting service... \e[0m" && sleep 1
 # create subspace-node service 
-tee $HOME/subspaced.service > /dev/null <<EOF
+sudo tee <<EOF >/dev/null /etc/systemd/system/subspaced.service
 [Unit]
 Description=Subspace Node
 After=network.target
-
 [Service]
-User=$USER
 Type=simple
-ExecStart=$(which subspace-node) --chain gemini-1 --execution wasm --pruning 1024 --keep-blocks 1024 --validator --name $NODENAME
+User=$USER
+ExecStart=$(which subspace-node) \\
+--chain="gemini-1" \\
+--execution="wasm" \\
+--pruning=1024 \\
+--keep-blocks=1024 \\
+--validator \\
+--name="$NODENAME"
 Restart=on-failure
+RestartSec=10
 LimitNOFILE=65535
-
 [Install]
 WantedBy=multi-user.target
 EOF
 
 # create subspaced-farmer service 
-tee $HOME/subspaced-farmer.service > /dev/null <<EOF
+sudo tee <<EOF >/dev/null /etc/systemd/system/subspaced-farmer.service
 [Unit]
-Description=Subspaced Farm
+Description=Subspace Farmer
 After=network.target
-
 [Service]
-User=$USER
 Type=simple
-ExecStart=$(which subspace-farmer) farm --reward-address $WALLET_ADDRESS --plot-size $PLOT_SIZE
+User=$USER
+ExecStart=$(which subspace-farmer) farm \\
+--reward-address=$WALLET_ADDRESS \\
+--plot-size=$PLOT_SIZE
 Restart=on-failure
-LimitNOFILE=65535
-
+RestartSec=10
+LimitNOFILE=10000
 [Install]
 WantedBy=multi-user.target
 EOF
 
-mv $HOME/subspaced* /etc/systemd/system/
 sudo systemctl restart systemd-journald
 sudo systemctl daemon-reload
 sudo systemctl enable subspaced subspaced-farmer
-sudo systemctl restart subspaced
+subspace-farmer wipe
+subspace-node purge-chain --chain gemini-1 -y
+systemctl restart subspaced
 sleep 30
-sudo systemctl restart subspaced-farmer
-sleep 5
+systemctl restart subspaced-farmer
 
 echo "==================================================="
 echo -e '\e[32mCheck node status\e[39m' && sleep 1
