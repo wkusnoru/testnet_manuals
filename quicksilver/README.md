@@ -7,13 +7,15 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/166148846-93575afe-e3ce-4ca5-a3f7-a21e8a8609cb.png">
 </p>
 
-# Quicksilver node setup for Testnet — quicktest-3 (v0.1.10)
+# Quicksilver node setup for Testnet — rhapsody-5 (v0.3.0)
 
 Official documentation:
 > [Validator setup instructions](https://github.com/ingenuity-build/testnets)
 
 ## Usefull tools I have created for quicksilver
 > To set up monitoring for your validator node navigate to [Set up monitoring and alerting for quicksilver validator](https://github.com/kj89/testnet_manuals/blob/main/quicksilver/monitoring/README.md)
+>
+> To migrate your valitorator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/quicksilver/migrate_validator.md)
 
 ## Hardware Requirements
 Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
@@ -115,7 +117,7 @@ quicksilverd query bank balances $WALLET_ADDRESS
 To create your validator run command below
 ```
 quicksilverd tx staking create-validator \
-  --amount 1000000uqck \
+  --amount 5000000uqck \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
@@ -129,6 +131,11 @@ quicksilverd tx staking create-validator \
 ### Get list of validators
 ```
 quicksilverd q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
+```
+
+## Get currently connected peer list with ids
+```
+curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
 ```
 
 ## Security

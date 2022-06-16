@@ -4,37 +4,37 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/172356220-b8326ceb-9950-4226-b66e-da69099aaf6e.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/166148846-93575afe-e3ce-4ca5-a3f7-a21e8a8609cb.png">
 </p>
 
 # Migrate your validator to another machine
 
 ### 1. Run a new full node on a new machine
-To setup full node you can follow my guide [kujira node setup for Testnet — harpoon-4](https://github.com/kj89/testnet_manuals/blob/main/kujira/README.md)
+To setup full node you can follow my guide [quicksilver node setup for Testnet — quicksilver](https://github.com/kj89/testnet_manuals/blob/main/quicksilver/README.md)
 
 ### 2. Confirm that you have the recovery seed phrase information for the active key running on the old machine
 
 #### To backup your key
 ```
-kujirad keys export mykey
+quicksilverd keys export mykey
 ```
 > _This prints the private key that you can then paste into the file `mykey.backup`_
 
 #### To get list of keys
 ```
-kujirad keys list
+quicksilverd keys list
 ```
 
 ### 3. Recover the active key of the old machine on the new machine
 
 #### This can be done with the mnemonics
 ```
-kujirad keys add mykey --recover
+quicksilverd keys add mykey --recover
 ```
 
 #### Or with the backup file `mykey.backup` from the previous step
 ```
-kujirad keys import mykey mykey.backup
+quicksilverd keys import mykey mykey.backup
 ```
 
 ### 4. Wait for the new full node on the new machine to finish catching-up
@@ -52,34 +52,34 @@ curl -s localhost:26657/status | jq .result.sync_info
 
 #### Stop and disable service on old machine
 ```
-sudo systemctl stop kujirad
-sudo systemctl disable kujirad
+sudo systemctl stop quicksilverd
+sudo systemctl disable quicksilverd
 ```
 > _The validator should start missing blocks at this point_
 
 ### 6. Stop service on new machine
 ```
-sudo systemctl stop kujirad
+sudo systemctl stop quicksilverd
 ```
 
 ### 7. Move the validator's private key from the old machine to the new machine
-#### Private key is located in: `~/.kujirad/config/priv_validator_key.json`
+#### Private key is located in: `~/.quicksilverd/config/priv_validator_key.json`
 
 > _After being copied, the key `priv_validator_key.json` should then be removed from the old node's config directory to prevent double-signing if the node were to start back up_
 ```
-mv ~/.kujirad/config/priv_validator_key.json ~/.kujirad/bak_priv_validator_key.json
+mv ~/.quicksilverd/config/priv_validator_key.json ~/.quicksilverd/bak_priv_validator_key.json
 ```
 
 ### 8. Start service on a new validator node
 ```
-sudo systemctl start kujirad
+sudo systemctl start quicksilverd
 ```
 > _The new node should start signing blocks once caught-up_
 
 ### 9. Make sure your validator is not jailed
 #### To unjail your validator
 ```
-kujirad tx slashing unjail --chain-id harpoon-4 --from mykey --gas=auto -y
+quicksilverd tx slashing unjail --chain-id quicksilver --from mykey --gas=auto -y
 ```
 
 ### 10. After you ensure your validator is producing blocks and is healthy you can shut down old validator server

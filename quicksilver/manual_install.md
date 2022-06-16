@@ -20,7 +20,7 @@ Save and import variables into system
 ```
 echo "export NODENAME=$NODENAME" >> $HOME/.bash_profile
 echo "export WALLET=wallet" >> $HOME/.bash_profile
-echo "export CHAIN_ID=quicktest-3" >> $HOME/.bash_profile
+echo "export CHAIN_ID=rhapsody-5" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
@@ -36,7 +36,7 @@ sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bs
 
 ## Install go
 ```
-ver="1.17.2"
+ver="1.18.2"
 cd $HOME
 wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
 sudo rm -rf /usr/local/go
@@ -50,7 +50,7 @@ go version
 ## Download and build binaries
 ```
 cd $HOME
-git clone https://github.com/ingenuity-build/quicksilver.git --branch v0.1.10
+git clone https://github.com/ingenuity-build/quicksilver.git --branch v0.3.0
 cd quicksilver
 make build
 chmod +x ./build/quicksilverd && mv ./build/quicksilverd /usr/local/bin/quicksilverd
@@ -59,7 +59,7 @@ chmod +x ./build/quicksilverd && mv ./build/quicksilverd /usr/local/bin/quicksil
 ## Config app
 ```
 quicksilverd config chain-id $CHAIN_ID
-quicksilverd config keyring-backend file
+quicksilverd config keyring-backend test
 ```
 
 ## Init app
@@ -79,8 +79,8 @@ sed -i -e "s/^minimum-gas-prices *=.*/minimum-gas-prices = \"0uqck\"/" $HOME/.qu
 
 ## Set seeds and peers
 ```
-SEEDS="dd3460ec11f78b4a7c4336f22a356fe00805ab64@seed.quicktest-1.quicksilver.zone:26656"
-PEERS=""
+SEEDS="dd3460ec11f78b4a7c4336f22a356fe00805ab64@seed.rhapsody-5.quicksilver.zone:26656"
+PEERS="c5cbd164de9c20a13e54e949b63bcae4052a948c@138.201.139.175:20956,9428068507466b542cbf378d59b77746c1d19a34@157.90.35.151:26657,4e7a6d8a3c8eeaad4be4898d8ec3af1cef92e28d@93.186.200.248:26656,eaeb462547cf76c3588e458120097b51db732b14@194.163.155.84:26656,51af5b6b4b0f5b2b53df98ec1b029743973f08aa@75.119.145.20:26656,9a9ed14d71a88354b0383419432ecce70e8cd2b3@161.97.152.215:26656,43bca26cb1b2e7474a8ffa560f210494023d5de4@135.181.140.225:26657"
 sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.quicksilverd/config/config.toml
 ```
 
@@ -101,22 +101,9 @@ sed -i -e "s/^pruning-keep-every *=.*/pruning-keep-every = \"$pruning_keep_every
 sed -i -e "s/^pruning-interval *=.*/pruning-interval = \"$pruning_interval\"/" $HOME/.quicksilverd/config/app.toml
 ```
 
-## State sync
-```
-SNAP_RPC1="http://node02.quicktest-1.quicksilver.zone:26657" \
-&& SNAP_RPC2="http://node04.quicktest-1.quicksilver.zone:26657"
-LATEST_HEIGHT=$(curl -s $SNAP_RPC2/block | jq -r .result.block.header.height) \
-&& BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)) \
-&& TRUST_HASH=$(curl -s "$SNAP_RPC2/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC1,$SNAP_RPC2\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.quicksilverd/config/config.toml
-```
-
 ## Reset chain data
 ```
-quicksilverd unsafe-reset-all
+quicksilverd tendermint unsafe-reset-all
 ```
 
 ## Create service

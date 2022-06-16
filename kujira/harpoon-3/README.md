@@ -4,19 +4,21 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/169664551-39020c2e-fa95-483b-916b-c52ce4cb907c.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/172356220-b8326ceb-9950-4226-b66e-da69099aaf6e.png">
 </p>
 
-# Sei node setup for Testnet — sei-testnet-2
+# kujira node setup for Testnet — harpoon-3
 
 Official documentation:
-> [Validator setup instructions](https://docs.seinetwork.io/nodes-and-validators/joining-testnets)
+>- [Validator setup instructions](https://docs.kujira.app/run-a-node)
 
-Chain explorer:
-> [Explorer from Nodes.Guru](https://sei.explorers.guru/)
+Explorer:
+>-  https://kujira.explorers.guru/
 
-## Usefull tools I have created for sei
-> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for sei validator](https://github.com/kj89/testnet_manuals/blob/main/sei/monitoring/README.md)
+## Usefull tools and references
+> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for kujira validator](https://github.com/kj89/testnet_manuals/blob/main/kujira/harpoon-3/monitoring/README.md)
+>
+> To migrate your valitorator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/kujira/harpoon-3/migrate_validator.md)
 
 ## Hardware Requirements
 Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
@@ -33,29 +35,18 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
  - 200GB of storage (SSD or NVME)
  - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
-## Set up your sei fullnode
+## Set up your kujira fullnode
 ### Option 1 (automatic)
-You can setup your sei fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
+You can setup your kujira fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
 ```
-wget -O sei_testnet.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/sei/sei_testnet.sh && chmod +x sei_testnet.sh && ./sei_testnet.sh
+wget -O kujira.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/kujira/harpoon-3/kujira.sh && chmod +x kujira.sh && ./kujira.sh
 ```
 
 ### Option 2 (manual)
-You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/sei/manual_install.md) if you better prefer setting up node manually
-
-## Chain upgrade from 1.0.2beta to 1.0.3beta
-Once the chain reaches the upgrade height, you will encounter the following panic error message:\
-`ERR UPGRADE "upgrade-1.0.3beta" NEEDED at height: 153759`
-```
-cd $HOME && rm $HOME/sei-chain -rf
-git clone https://github.com/sei-protocol/sei-chain.git && cd $HOME/sei-chain
-git checkout 1.0.3beta
-make install
-mv ~/go/bin/seid /usr/local/bin/seid
-systemctl restart seid && journalctl -fu seid -o cat
-```
+You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/kujira/harpoon-3/manual_install.md) if you better prefer setting up node manually
 
 ## Post installation
+
 When installation is finished please load variables into system
 ```
 source $HOME/.bash_profile
@@ -63,39 +54,34 @@ source $HOME/.bash_profile
 
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 ```
-seid status 2>&1 | jq .SyncInfo
-```
-
-To check logs
-```
-journalctl -u seid -f -o cat
+kujirad status 2>&1 | jq .SyncInfo
 ```
 
 ### Create wallet
 To create new wallet you can use command below. Don’t forget to save the mnemonic
 ```
-seid keys add $WALLET
+kujirad keys add $WALLET
 ```
 
 (OPTIONAL) To recover your wallet using seed phrase
 ```
-seid keys add $WALLET --recover
+kujirad keys add $WALLET --recover
 ```
 
 To get current list of wallets
 ```
-seid keys list
+kujirad keys list
 ```
 
 ### Save wallet info
 Add wallet address
 ```
-WALLET_ADDRESS=$(seid keys show $WALLET -a)
+WALLET_ADDRESS=$(kujirad keys show $WALLET -a)
 ```
 
 Add valoper address
 ```
-VALOPER_ADDRESS=$(seid keys show $WALLET --bech val -a)
+VALOPER_ADDRESS=$(kujirad keys show $WALLET --bech val -a)
 ```
 
 Load variables into system
@@ -106,44 +92,32 @@ source $HOME/.bash_profile
 ```
 
 ### Fund your wallet
-To top up your wallet join [Sei discord server](https://discord.gg/CSczWRVT) and navigate to **#testnet-faucet** channel
-
-To request a faucet grant:
+In order to create validator first you need to fund your wallet with testnet tokens
 ```
-!faucet <YOUR_WALLET_ADDRESS>
+curl -X POST https://faucet.kujira.app/$WALLET_ADDRESS
 ```
 
 ### Create validator
-Before creating validator please make sure that you have at least 1 sei (1 sei is equal to 1000000 usei) and your node is synchronized
+Before creating validator please make sure that you have at least 1 kujira (1 kujira is equal to 1000000 ukuji) and your node is synchronized
 
 To check your wallet balance:
 ```
-seid query bank balances $WALLET_ADDRESS
+kujirad query bank balances $WALLET_ADDRESS
 ```
 > If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue 
 
 To create your validator run command below
 ```
-seid tx staking create-validator \
-  --amount 1000000usei \
+kujirad tx staking create-validator \
+  --amount 100000000ukuji \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
   --commission-rate "0.07" \
   --min-self-delegation "1" \
-  --pubkey  $(seid tendermint show-validator) \
+  --pubkey  $(kujirad tendermint show-validator) \
   --moniker $NODENAME \
   --chain-id $CHAIN_ID
-```
-
-### Get list of validators
-```
-seid q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
-```
-
-## Get currently connected peer list with ids
-```
-curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
 ```
 
 ## Security
@@ -169,102 +143,119 @@ sudo ufw enable
 ```
 
 ## Monitoring
-To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for sei validator](https://github.com/kj89/testnet_manuals/blob/main/sei/monitoring/README.md)
+To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for kujira validator](https://github.com/kj89/testnet_manuals/blob/main/kujira/harpoon-3/monitoring/README.md)
+
+## Calculate synchronization time
+This script will help you to estimate how much time it will take to fully synchronize your node\
+It measures average blocks per minute that are being synchronized for period of 5 minutes and then gives you results
+```
+wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/kujira/harpoon-3/tools/synctime.py && python3 ./synctime.py
+```
+
+## Get currently connected peer list with ids
+```
+curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
+```
 
 ## Usefull commands
 ### Service management
 Check logs
 ```
-journalctl -fu seid -o cat
+journalctl -fu kujirad -o cat
 ```
 
 Start service
 ```
-systemctl start seid
+systemctl start kujirad
 ```
 
 Stop service
 ```
-systemctl stop seid
+systemctl stop kujirad
 ```
 
 Restart service
 ```
-systemctl restart seid
+systemctl restart kujirad
 ```
 
 ### Node info
 Synchronization info
 ```
-seid status 2>&1 | jq .SyncInfo
+kujirad status 2>&1 | jq .SyncInfo
 ```
 
 Validator info
 ```
-seid status 2>&1 | jq .ValidatorInfo
+kujirad status 2>&1 | jq .ValidatorInfo
 ```
 
 Node info
 ```
-seid status 2>&1 | jq .NodeInfo
+kujirad status 2>&1 | jq .NodeInfo
 ```
 
 Show node id
 ```
-seid tendermint show-node-id
+kujirad tendermint show-node-id
 ```
 
 ### Wallet operations
 List of wallets
 ```
-seid keys list
+kujirad keys list
 ```
 
 Recover wallet
 ```
-seid keys add $WALLET --recover
+kujirad keys add $WALLET --recover
 ```
 
 Delete wallet
 ```
-seid keys delete $WALLET
+kujirad keys delete $WALLET
 ```
 
 Get wallet balance
 ```
-seid query bank balances $WALLET_ADDRESS
+kujirad query bank balances $WALLET_ADDRESS
 ```
 
 Transfer funds
 ```
-seid tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000usei
+kujirad tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000ukuji
+```
+
+### Voting
+```
+kujirad tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-seid tx staking delegate $VALOPER_ADDRESS 10000000usei --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --gas-adjustment 1.4
+kujirad tx staking delegate $VALOPER_ADDRESS 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-seid tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000usei --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --gas-adjustment 1.4
+kujirad tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
 ```
-seid tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --gas-adjustment 1.4
+kujirad tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Withdraw rewards with commision
 ```
-seid tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
+kujirad tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
 ```
 
 ### Validator management
 Edit validator
 ```
-seid tx staking edit-validator \
+kujirad tx staking edit-validator \
 --moniker=$NODENAME \
 --identity=1C5ACD2EEF363C3A \
 --website="http://kjnodes.com" \
@@ -275,20 +266,20 @@ seid tx staking edit-validator \
 
 Unjail validator
 ```
-seid tx slashing unjail \
+kujirad tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
   --chain-id=$CHAIN_ID \
-  --gas=auto --gas-adjustment 1.4
+  --gas=auto
 ```
 
 ### Delete node
 This commands will completely remove node from server. Use at your own risk!
 ```
-systemctl stop seid
-systemctl disable seid
-rm /etc/systemd/system/sei* -rf
-rm $(which seid) -rf
-rm $HOME/.sei -rf
-rm $HOME/sei-chain -rf
+systemctl stop kujirad
+systemctl disable kujirad
+rm /etc/systemd/system/kujira* -rf
+rm $(which kujirad) -rf
+rm $HOME/.kujira* -rf
+rm $HOME/kujira-core -rf
 ```

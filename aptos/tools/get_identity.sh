@@ -1,4 +1,6 @@
 echo -e "\e[1m\e[32mExtracting node identity details \e[0m" 
+KEY=$(cat ~/aptos/public_full_node.yaml | yq .full_node_networks[0].identity.key)
+PEER_ID=$(cat ~/aptos/public_full_node.yaml | yq .full_node_networks[0].identity.peer_id)
 source $HOME/.bash_profile
 if [ "$KEY" ] && [ "$PEER_ID" ]; then
     echo -en "\n"
@@ -7,7 +9,7 @@ if [ "$KEY" ] && [ "$PEER_ID" ]; then
     echo -e ' 
 '$PEER_ID':
     addresses: 
-    - "/ip4/'$(ip route get 8.8.8.8 | sed -n "/src/{s/.*src *\([^ ]*\).*/\1/p;q}")'/tcp/6180/ln-noise-ik/'$PEER_ID'/ln-handshake/0" 
+    - "/ip4/'$(ip route get 8.8.8.8 | sed -n "/src/{s/.*src *\([^ ]*\).*/\1/p;q}")'/tcp/6180/noise-ik/'$PEER_ID'/handshake/0" 
     role: "Upstream"'
     echo -en "\n"
     echo "=================================================="

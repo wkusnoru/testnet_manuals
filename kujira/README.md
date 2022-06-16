@@ -7,7 +7,7 @@ Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/172356220-b8326ceb-9950-4226-b66e-da69099aaf6e.png">
 </p>
 
-# kujira node setup for Testnet — harpoon-3
+# kujira node setup for Testnet — harpoon-4
 
 Official documentation:
 >- [Validator setup instructions](https://docs.kujira.app/run-a-node)
@@ -92,9 +92,12 @@ source $HOME/.bash_profile
 ```
 
 ### Fund your wallet
-In order to create validator first you need to fund your wallet with testnet tokens
+In order to create validator first you need to fund your wallet with testnet tokens.
+To top up your wallet join [Kujira discord server](https://discord.gg/JFmgazu2) and navigate to **#faucet-requests** channel
+
+To request a faucet grant:
 ```
-curl -X POST https://faucet.kujira.app/$WALLET_ADDRESS
+!faucet <YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
@@ -109,7 +112,7 @@ kujirad query bank balances $WALLET_ADDRESS
 To create your validator run command below
 ```
 kujirad tx staking create-validator \
-  --amount 100000000ukuji \
+  --amount 1999000ukuji \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
@@ -117,7 +120,8 @@ kujirad tx staking create-validator \
   --min-self-delegation "1" \
   --pubkey  $(kujirad tendermint show-validator) \
   --moniker $NODENAME \
-  --chain-id $CHAIN_ID
+  --chain-id $CHAIN_ID \
+  --fees 250ukuji
 ```
 
 ## Security
@@ -223,33 +227,33 @@ kujirad query bank balances $WALLET_ADDRESS
 
 Transfer funds
 ```
-kujirad tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000ukuji
+kujirad tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000ukuji --fees 250ukuji
 ```
 
 ### Voting
 ```
-kujirad tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID
+kujirad tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID --fees 250ukuji
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-kujirad tx staking delegate $VALOPER_ADDRESS 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+kujirad tx staking delegate $VALOPER_ADDRESS 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --fees 250ukuji
 ```
 
 Redelegate stake from validator to another validator
 ```
-kujirad tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+kujirad tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ukuji --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --fees 250ukuji
 ```
 
 Withdraw all rewards
 ```
-kujirad tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+kujirad tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --fees 250ukuji
 ```
 
 Withdraw rewards with commision
 ```
-kujirad tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
+kujirad tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID --fees 250ukuji
 ```
 
 ### Validator management
@@ -261,7 +265,8 @@ kujirad tx staking edit-validator \
 --website="http://kjnodes.com" \
 --details="Providing professional staking services with high performance and availability. Find me at Discord: kjnodes#8455 and Telegram: @kjnodes" \
 --chain-id=$CHAIN_ID \
---from=$WALLET
+--from=$WALLET \
+--fees 250ukuji
 ```
 
 Unjail validator
@@ -270,7 +275,8 @@ kujirad tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
   --chain-id=$CHAIN_ID \
-  --gas=auto
+  --gas=auto \
+  --fees 250ukuji
 ```
 
 ### Delete node

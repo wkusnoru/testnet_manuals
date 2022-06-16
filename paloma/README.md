@@ -13,7 +13,7 @@ Official documentation:
 >- [Validator setup instructions](https://github.com/palomachain/paloma)
 
 Explorer:
->-  N/A
+>-  https://paloma.explorers.guru/
 
 ## Usefull tools and references
 > To set up monitoring for your validator node navigate to [Set up monitoring and alerting for paloma validator](https://github.com/kj89/testnet_manuals/blob/main/paloma/monitoring/README.md)
@@ -92,10 +92,7 @@ source $HOME/.bash_profile
 ```
 
 ### Fund your wallet
-In order to create validator first you need to fund your wallet with testnet tokens
-```
-curl -X POST https://faucet.paloma.app/$WALLET_ADDRESS
-```
+Try to join [official telegram channel](https://t.me/palomachain) and try to ask for some grains to start validator
 
 ### Create validator
 Before creating validator please make sure that you have at least 1 paloma (1 paloma is equal to 1000000 grain) and your node is synchronized
