@@ -4,7 +4,7 @@ If you want to setup fullnode manually follow the steps below
 ## Setting up vars
 Here you have to put name of your moniker (validator) that will be visible in explorer
 ```
-NODENAME=<MY_MONIKER_NAME_GOES_HERE>
+NODENAME=<YOUR_MONIKER_NAME_GOES_HERE>
 ```
 
 Save and import variables into system
@@ -27,7 +27,7 @@ sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bs
 
 ## Install go
 ```
-ver="1.17.2"
+ver="1.18.2"
 cd $HOME
 wget "https://golang.org/dl/go$ver.linux-amd64.tar.gz"
 sudo rm -rf /usr/local/go

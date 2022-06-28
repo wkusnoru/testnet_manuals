@@ -1,22 +1,28 @@
 <p style="font-size:14px" align="right">
-Join our telegram <a href="https://t.me/kjnotes" target="_blank"><img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
-Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+</p>
+
+<p style="font-size:14px" align="right">
+<a href="https://hetzner.cloud/?ref=y8pQKS2nNy7i" target="_blank">Deploy your VPS using our referral link to get 20€ bonus <img src="https://user-images.githubusercontent.com/50621007/174612278-11716b2a-d662-487e-8085-3686278dd869.png" width="30"/></a>
 </p>
 
 <p align="center">
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/169664551-39020c2e-fa95-483b-916b-c52ce4cb907c.png">
 </p>
 
-# Sei node setup for Testnet — sei-testnet-2
+# sei node setup for Testnet — sei-testnet-2
 
 Official documentation:
-> [Validator setup instructions](https://docs.seinetwork.io/nodes-and-validators/joining-testnets)
+>- [Validator setup instructions](https://docs.seinetwork.io/nodes-and-validators/joining-testnets)
 
 Chain explorer:
-> [Explorer from Nodes.Guru](https://sei.explorers.guru/)
+>- [Explorer from Nodes.Guru](https://sei.explorers.guru/)
 
-## Usefull tools I have created for sei
+## Usefull tools and references
 > To set up monitoring for your validator node navigate to [Set up monitoring and alerting for sei validator](https://github.com/kj89/testnet_manuals/blob/main/sei/monitoring/README.md)
+>
+> To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/sei/migrate_validator.md)
 
 ## Hardware Requirements
 Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
@@ -27,7 +33,7 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
  - 80GB Disk
  - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
-### Optimal Hardware Requirements 
+### Recommended Hardware Requirements 
  - 4x CPUs; the faster clock speed the better
  - 8GB RAM
  - 200GB of storage (SSD or NVME)
@@ -37,7 +43,7 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
 ### Option 1 (automatic)
 You can setup your sei fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
 ```
-wget -O sei_testnet.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/sei/sei_testnet.sh && chmod +x sei_testnet.sh && ./sei_testnet.sh
+wget -O sei.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/sei/sei.sh && chmod +x sei.sh && ./sei.sh
 ```
 
 ### Option 2 (manual)
@@ -55,7 +61,28 @@ mv ~/go/bin/seid /usr/local/bin/seid
 systemctl restart seid && journalctl -fu seid -o cat
 ```
 
+## Chain upgrade from 1.0.3beta to 1.0.4beta
+Once the chain reaches the upgrade height, you will encounter the following panic error message:\
+`ERR UPGRADE "upgrade-1.0.4beta" NEEDED at height: 681000`
+```
+cd $HOME && rm $HOME/sei-chain -rf
+git clone https://github.com/sei-protocol/sei-chain.git && cd $HOME/sei-chain
+git checkout 1.0.4beta
+make install
+mv ~/go/bin/seid /usr/local/bin/seid
+systemctl restart seid && journalctl -fu seid -o cat
+```
+
+## Optimize validator config
+![image](https://user-images.githubusercontent.com/50621007/176101397-cbc216a4-1c11-4d1e-9e1d-33a84280d508.png)
+```
+wget -qO optimize-configs.sh https://raw.githubusercontent.com/sei-protocol/testnet/main/sei-testnet-2/optimize-configs.sh
+sudo chmod +x optimize-configs.sh && ./optimize-configs.sh
+sudo systemctl restart seid
+```
+
 ## Post installation
+
 When installation is finished please load variables into system
 ```
 source $HOME/.bash_profile
@@ -64,11 +91,6 @@ source $HOME/.bash_profile
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 ```
 seid status 2>&1 | jq .SyncInfo
-```
-
-To check logs
-```
-journalctl -u seid -f -o cat
 ```
 
 ### Create wallet
@@ -88,20 +110,12 @@ seid keys list
 ```
 
 ### Save wallet info
-Add wallet address
+Add wallet and valoper address and load variables into the system
 ```
-WALLET_ADDRESS=$(seid keys show $WALLET -a)
-```
-
-Add valoper address
-```
-VALOPER_ADDRESS=$(seid keys show $WALLET --bech val -a)
-```
-
-Load variables into system
-```
-echo 'export WALLET_ADDRESS='${WALLET_ADDRESS} >> $HOME/.bash_profile
-echo 'export VALOPER_ADDRESS='${VALOPER_ADDRESS} >> $HOME/.bash_profile
+SEI_WALLET_ADDRESS=$(seid keys show $WALLET -a)
+SEI_VALOPER_ADDRESS=$(seid keys show $WALLET --bech val -a)
+echo 'export SEI_WALLET_ADDRESS='${SEI_WALLET_ADDRESS} >> $HOME/.bash_profile
+echo 'export SEI_VALOPER_ADDRESS='${SEI_VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
@@ -118,7 +132,7 @@ Before creating validator please make sure that you have at least 1 sei (1 sei i
 
 To check your wallet balance:
 ```
-seid query bank balances $WALLET_ADDRESS
+seid query bank balances $SEI_WALLET_ADDRESS
 ```
 > If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue 
 
@@ -133,17 +147,7 @@ seid tx staking create-validator \
   --min-self-delegation "1" \
   --pubkey  $(seid tendermint show-validator) \
   --moniker $NODENAME \
-  --chain-id $CHAIN_ID
-```
-
-### Get list of validators
-```
-seid q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
-```
-
-## Get currently connected peer list with ids
-```
-curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
+  --chain-id $SEI_CHAIN_ID
 ```
 
 ## Security
@@ -164,12 +168,29 @@ sudo ufw default allow outgoing
 sudo ufw default deny incoming
 sudo ufw allow ssh/tcp
 sudo ufw limit ssh/tcp
-sudo ufw allow 26656,26660/tcp
+sudo ufw allow ${SEI_PORT}656,${SEI_PORT}660/tcp
 sudo ufw enable
 ```
 
 ## Monitoring
 To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for sei validator](https://github.com/kj89/testnet_manuals/blob/main/sei/monitoring/README.md)
+
+## Calculate synchronization time
+This script will help you to estimate how much time it will take to fully synchronize your node\
+It measures average blocks per minute that are being synchronized for period of 5 minutes and then gives you results
+```
+wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/sei/tools/synctime.py && python3 ./synctime.py
+```
+
+### Get list of validators
+```
+seid q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
+```
+
+## Get currently connected peer list with ids
+```
+curl -sS http://localhost:${SEI_PORT}657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
+```
 
 ## Usefull commands
 ### Service management
@@ -180,17 +201,17 @@ journalctl -fu seid -o cat
 
 Start service
 ```
-systemctl start seid
+sudo systemctl start seid
 ```
 
 Stop service
 ```
-systemctl stop seid
+sudo systemctl stop seid
 ```
 
 Restart service
 ```
-systemctl restart seid
+sudo systemctl restart seid
 ```
 
 ### Node info
@@ -232,45 +253,50 @@ seid keys delete $WALLET
 
 Get wallet balance
 ```
-seid query bank balances $WALLET_ADDRESS
+seid query bank balances $SEI_WALLET_ADDRESS
 ```
 
 Transfer funds
 ```
-seid tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000usei
+seid tx bank send $SEI_WALLET_ADDRESS <TO_SEI_WALLET_ADDRESS> 10000000usei
+```
+
+### Voting
+```
+seid tx gov vote 1 yes --from $WALLET --chain-id=$SEI_CHAIN_ID
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-seid tx staking delegate $VALOPER_ADDRESS 10000000usei --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --gas-adjustment 1.4
+seid tx staking delegate $SEI_VALOPER_ADDRESS 10000000usei --from=$WALLET --chain-id=$SEI_CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-seid tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000usei --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --gas-adjustment 1.4
+seid tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000usei --from=$WALLET --chain-id=$SEI_CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
 ```
-seid tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --gas-adjustment 1.4
+seid tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$SEI_CHAIN_ID --gas=auto
 ```
 
 Withdraw rewards with commision
 ```
-seid tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
+seid tx distribution withdraw-rewards $SEI_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$SEI_CHAIN_ID
 ```
 
 ### Validator management
 Edit validator
 ```
 seid tx staking edit-validator \
---moniker=$NODENAME \
---identity=1C5ACD2EEF363C3A \
---website="http://kjnodes.com" \
---details="Providing professional staking services with high performance and availability. Find me at Discord: kjnodes#8455 and Telegram: @kjnodes" \
---chain-id=$CHAIN_ID \
---from=$WALLET
+  --moniker=$NODENAME \
+  --identity=1C5ACD2EEF363C3A \
+  --website="http://kjnodes.com" \
+  --details="Providing professional staking services with high performance and availability. Find me at Discord: kjnodes#8455 and Telegram: @kjnodes" \
+  --chain-id=$SEI_CHAIN_ID \
+  --from=$WALLET
 ```
 
 Unjail validator
@@ -278,17 +304,17 @@ Unjail validator
 seid tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
-  --chain-id=$CHAIN_ID \
-  --gas=auto --gas-adjustment 1.4
+  --chain-id=$SEI_CHAIN_ID \
+  --gas=auto
 ```
 
 ### Delete node
 This commands will completely remove node from server. Use at your own risk!
 ```
-systemctl stop seid
-systemctl disable seid
-rm /etc/systemd/system/sei* -rf
-rm $(which seid) -rf
-rm $HOME/.sei -rf
-rm $HOME/sei-chain -rf
+sudo systemctl stop seid
+sudo systemctl disable seid
+sudo rm /etc/systemd/system/sei* -rf
+sudo rm $(which seid) -rf
+sudo rm $HOME/.sei -rf
+sudo rm $HOME/sei-chain -rf
 ```

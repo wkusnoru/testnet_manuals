@@ -4,7 +4,7 @@ If you want to setup fullnode manually follow the steps below
 ## Setting up vars
 Here you have to put name of your moniker (validator) that will be visible in explorer
 ```
-NODENAME=<MY_MONIKER_NAME_GOES_HERE>
+NODENAME=<YOUR_MONIKER_NAME_GOES_HERE>
 ```
 
 Save and import variables into system
@@ -112,7 +112,7 @@ s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.uptickd/c
 
 ## Reset chain data
 ```
-uptickd tendermint unsafe-reset-all
+uptickd tendermint unsafe-reset-all --home $HOME/.uptickd
 ```
 
 ## Create service
@@ -124,7 +124,7 @@ After=network-online.target
 
 [Service]
 User=$USER
-ExecStart=$(which uptickd) start
+ExecStart=$(which uptickd) start --home $HOME/.uptickd
 Restart=on-failure
 RestartSec=3
 LimitNOFILE=65535

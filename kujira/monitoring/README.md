@@ -1,6 +1,10 @@
 <p style="font-size:14px" align="right">
-Join our telegram <a href="https://t.me/kjnotes" target="_blank"><img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
-Visit our website <a href="https://kjnodes.com/" target="_blank"><img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+</p>
+
+<p style="font-size:14px" align="right">
+<a href="https://hetzner.cloud/?ref=y8pQKS2nNy7i" target="_blank">Deploy your VPS using our referral link to get 20€ bonus <img src="https://user-images.githubusercontent.com/50621007/174612278-11716b2a-d662-487e-8085-3686278dd869.png" width="30"/></a>
 </p>
 
 <p align="center">
@@ -19,8 +23,8 @@ wget -O install_exporters.sh https://raw.githubusercontent.com/kj89/cosmos_node_
 
 | KEY |VALUE |
 |---------------|-------------|
-| **bond_denom** | Denominated token name, for example, `ukuji` for kujira kujira testnet. You can find it in genesis file |
-| **bench_prefix** | Prefix for chain addresses, for example, `kujira` for kujira kujira testnet. You can find it in public addresses like this **kujira**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
+| **bond_denom** | Denominated token name, for example, `ukuji` for kujira testnet. You can find it in genesis file |
+| **bench_prefix** | Prefix for chain addresses, for example, `kujira` for kujira testnet. You can find it in public addresses like this **kujira**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
 
 make sure following ports are open:
 - `9100` (node-exporter)
@@ -49,12 +53,12 @@ wget -O install_monitoring.sh https://raw.githubusercontent.com/kj89/cosmos_node
 
 ### Copy _.env.example_ into _.env_
 ```
-cp $HOME/cosmos_node_monitoring/config/.env.example $HOME/cosmos_node_monitoring/config/.env
+sudo cp $HOME/cosmos_node_monitoring/config/.env.example $HOME/cosmos_node_monitoring/config/.env
 ```
 
 ### Update values in _.env_ file
 ```
-vim $HOME/cosmos_node_monitoring/config/.env
+sudo vim $HOME/cosmos_node_monitoring/config/.env
 ```
 
 | KEY | VALUE |
@@ -69,9 +73,9 @@ source $HOME/.bash_profile
 ```
 
 ### Add validator into _prometheus_ configuration file
-To add validator use command with specified `VALIDATOR_IP`, `VALOPER_ADDRESS`, `WALLET_ADDRESS` and `PROJECT_NAME`
+To add validator use command with specified `VALIDATOR_IP`, `KUJIRA_VALOPER_ADDRESS`, `KUJIRA_WALLET_ADDRESS` and `PROJECT_NAME`
 ```
-$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP VALOPER_ADDRESS WALLET_ADDRESS PROJECT_NAME
+$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP KUJIRA_VALOPER_ADDRESS KUJIRA_WALLET_ADDRESS PROJECT_NAME
 ```
 
 > example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 kujiravaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete kujira1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc kujira```
@@ -82,7 +86,7 @@ To add more validators just run command above with validator values
 Deploy the monitoring stack
 ```
 cd $HOME/cosmos_node_monitoring
-docker compose up -d
+sudo docker compose up -d
 ```
 
 ports used:
@@ -131,7 +135,7 @@ ports used:
 ### Test alerts
 1. For simple test you can stop `node-exporter` service for 5 minutes. It should trigger alert
 ```
-systemctl stop node_exporter
+sudo systemctl stop node_exporter
 ```
 2. You will see message from bot firing
 
@@ -139,7 +143,7 @@ systemctl stop node_exporter
 
 3. Now you can start `node-exporter` service back
 ```
-systemctl start node_exporter
+sudo systemctl start node_exporter
 ```
 4. You will get confirmation from bot that issue is resolved
 
@@ -166,8 +170,8 @@ Grafana dashboard is devided into 4 sections:
 ## Cleanup all container data
 ```
 cd $HOME/cosmos_node_monitoring
-docker compose down
-docker volume prune -f
+sudo docker compose down
+sudo docker volume prune -f
 ```
 
 ## Reference list
