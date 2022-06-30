@@ -1,5 +1,6 @@
 <p style="font-size:14px" align="right">
-<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://discord.gg/EY35ZzXY" target="_blank">Join our discord <img src="https://user-images.githubusercontent.com/50621007/176236430-53b0f4de-41ff-41f7-92a1-4233890a90c8.png" width="30"/></a>
 <a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
 </p>
 
@@ -43,11 +44,13 @@ grpc_addr = 'http://1.2.3.4:11090'
 websocket_addr = 'ws://1.2.3.4:11657/websocket'
 ```
 
-## (ON QUICKSILVER NODE) Expose Quicksilver RPC server in .quicksilverd/config/config.toml at line 91
-Change `127.0.0.1` to `0.0.0.0` and restart service. Example below:
+## (ON QUICKSILVER NODE) Run this commands for change laddr adress `127.0.0.1` to `0.0.0.0` and restart service:
+*You need to do this on the server with `killerqueen-1` installed.*
 ```
-# TCP or UNIX socket address for the RPC server to listen on
-laddr = "tcp://0.0.0.0:11657"
+PORTR=$(grep -A 3 "\[rpc\]" ~/.quicksilverd/config/config.toml | egrep -o ":[0-9]+")
+sed -i.bak -e "s%^laddr = \"tcp://127.0.0.1$PORTR\"%laddr = \"tcp://0.0.0.0$PORTR\"%" $HOME/.quicksilverd/config/config.toml
+
+systemctl restart quicksilverd
 ```
 
 ## Restore keys
@@ -130,7 +133,7 @@ icad query bank balances <COSMOS_WALLET_ADDRESS>
 
 quicksilver balance
 ```
-ica query bank balances <QUICKSILVER_WALLET_ADDRESS>
+quicksilverd query bank balances <QUICKSILVER_WALLET_ADDRESS>
 ```
 
 You should see similar output:

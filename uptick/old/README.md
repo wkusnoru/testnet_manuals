@@ -9,33 +9,34 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/166676803-ee125d04-dfe2-4c92-8f0c-8af357aad691.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/171044333-016e348d-1d96-4d00-8dce-f7de45aa9f84.png">
 </p>
 
-# DWS node setup for Testnet — deweb-testnet-1
+# uptick node setup for Testnet — uptick_7776-1
 
 Official documentation:
->- [Validator setup instructions](https://docs.deweb.services/guides/validator-setup-guide)
+>- [Validator setup instructions](https://docs.uptick.network/testnet/)
 
 Explorer:
->-  https://dws.explorers.guru/
+>-  https://explorer.testnet.uptick.network/uptick-network-testnet
 
 ## Usefull tools and references
-> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for DWS validator](https://github.com/kj89/testnet_manuals/blob/main/dws/monitoring/README.md)
+> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for uptick validator](https://github.com/kj89/testnet_manuals/blob/main/uptick/monitoring/README.md)
 >
-> To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/dws/migrate_validator.md)
+> To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/uptick/migrate_validator.md)
 
-## Set up your dws fullnode
+## Set up your uptick fullnode
 ### Option 1 (automatic)
-You can setup your dws fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
+You can setup your uptick fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
 ```
-wget -O dws.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/dws/dws.sh && chmod +x dws.sh && ./dws.sh
+wget -O uptick.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/uptick/uptick.sh && chmod +x uptick.sh && ./uptick.sh
 ```
 
 ### Option 2 (manual)
-You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/dws/manual_install.md) if you better prefer setting up node manually
+You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/uptick/manual_install.md) if you better prefer setting up node manually
 
-### Post installation
+## Post installation
+
 When installation is finished please load variables into system
 ```
 source $HOME/.bash_profile
@@ -43,34 +44,34 @@ source $HOME/.bash_profile
 
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 ```
-dewebd status 2>&1 | jq .SyncInfo
+uptickd status 2>&1 | jq .SyncInfo
 ```
 
 ### Create wallet
 To create new wallet you can use command below. Don’t forget to save the mnemonic
 ```
-dewebd keys add $WALLET
+uptickd keys add $WALLET
 ```
 
 (OPTIONAL) To recover your wallet using seed phrase
 ```
-dewebd keys add $WALLET --recover
+uptickd keys add $WALLET --recover
 ```
 
 To get current list of wallets
 ```
-dewebd keys list
+uptickd keys list
 ```
 
 ### Save wallet info
 Add wallet address
 ```
-WALLET_ADDRESS=$(dewebd keys show $WALLET -a)
+WALLET_ADDRESS=$(uptickd keys show $WALLET -a)
 ```
 
 Add valoper address
 ```
-VALOPER_ADDRESS=$(dewebd keys show $WALLET --bech val -a)
+VALOPER_ADDRESS=$(uptickd keys show $WALLET --bech val -a)
 ```
 
 Load variables into system
@@ -82,38 +83,34 @@ source $HOME/.bash_profile
 
 ### Fund your wallet
 In order to create validator first you need to fund your wallet with testnet tokens.
-To top up your wallet join DWS discord server and navigate to:
-- **#faucet** for DWS tokens
+To top up your wallet join [Uptick discord server](https://discord.gg/eStaNHZbm4) and navigate to **#faucet** channel
 
 To request a faucet grant:
 ```
-$request <YOUR_WALLET_ADDRESS> menkar
+$faucet <YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
-Before creating validator please make sure that you have at least 1 dws (1 dws is equal to 1000000 udws) and your node is synchronized
+Before creating validator please make sure that you have at least 1 uptick (1 uptick is equal to 1000000000000000000 auptick) and your node is synchronized
 
 To check your wallet balance:
 ```
-dewebd query bank balances $WALLET_ADDRESS
+uptickd query bank balances $WALLET_ADDRESS
 ```
 > If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue 
 
 To create your validator run command below
 ```
-dewebd tx staking create-validator \
-  --amount 1000000udws \
+uptickd tx staking create-validator \
+  --amount 5000000000000000000auptick \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
   --commission-rate "0.07" \
   --min-self-delegation "1" \
-  --pubkey  $(dewebd tendermint show-validator) \
+  --pubkey  $(uptickd tendermint show-validator) \
   --moniker $NODENAME \
-  --chain-id $CHAIN_ID \
-  --gas auto \
-  --gas-adjustment 1.5 \
-  --gas-prices 0.001udws
+  --chain-id $CHAIN_ID
 ```
 
 ## Security
@@ -139,13 +136,13 @@ sudo ufw enable
 ```
 
 ## Monitoring
-To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for dws validator](https://github.com/kj89/testnet_manuals/blob/main/dws/monitoring/README.md)
+To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for uptick validator](https://github.com/kj89/testnet_manuals/blob/main/uptick/monitoring/README.md)
 
 ## Calculate synchronization time
 This script will help you to estimate how much time it will take to fully synchronize your node\
 It measures average blocks per minute that are being synchronized for period of 5 minutes and then gives you results
 ```
-wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/dws/tools/synctime.py && python3 ./synctime.py
+wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/uptick/tools/synctime.py && python3 ./synctime.py
 ```
 
 ## Get currently connected peer list with ids
@@ -157,122 +154,125 @@ curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_inf
 ### Service management
 Check logs
 ```
-journalctl -fu dewebd -o cat
+journalctl -fu uptickd -o cat
 ```
 
 Start service
 ```
-systemctl start dewebd
+systemctl start uptickd
 ```
 
 Stop service
 ```
-systemctl stop dewebd
+systemctl stop uptickd
 ```
 
 Restart service
 ```
-systemctl restart dewebd
+systemctl restart uptickd
 ```
 
 ### Node info
 Synchronization info
 ```
-dewebd status 2>&1 | jq .SyncInfo
+uptickd status 2>&1 | jq .SyncInfo
 ```
 
 Validator info
 ```
-dewebd status 2>&1 | jq .ValidatorInfo
+uptickd status 2>&1 | jq .ValidatorInfo
 ```
 
 Node info
 ```
-dewebd status 2>&1 | jq .NodeInfo
+uptickd status 2>&1 | jq .NodeInfo
 ```
 
 Show node id
 ```
-dewebd tendermint show-node-id
+uptickd tendermint show-node-id
 ```
 
 ### Wallet operations
 List of wallets
 ```
-dewebd keys list
+uptickd keys list
 ```
 
 Recover wallet
 ```
-dewebd keys add $WALLET --recover
+uptickd keys add $WALLET --recover
 ```
 
 Delete wallet
 ```
-dewebd keys delete $WALLET
+uptickd keys delete $WALLET
 ```
 
 Get wallet balance
 ```
-dewebd query bank balances $WALLET_ADDRESS
+uptickd query bank balances $WALLET_ADDRESS
 ```
 
 Transfer funds
 ```
-dewebd tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000udws
+uptickd tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000auptick
+```
+
+### Voting
+```
+uptickd tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-dewebd tx staking delegate $VALOPER_ADDRESS 10000000udws --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --fees=200udws
+uptickd tx staking delegate $VALOPER_ADDRESS 10000000auptick --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-dewebd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000udws --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --fees=200udws
+uptickd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000auptick --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
 ```
-dewebd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto --fees=200udws
+uptickd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
 ```
 
 Withdraw rewards with commision
 ```
-dewebd tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
+uptickd tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
 ```
 
 ### Validator management
 Edit validator
 ```
-dewebd tx staking edit-validator \
-  --moniker=$NODENAME \
-  --identity=<your_keybase_id> \
-  --website="<your_website>" \
-  --details="<your_validator_description>" \
-  --chain-id=$CHAIN_ID \
-  --from=$WALLET \
-  --fees=200udws
+uptickd tx staking edit-validator \
+--moniker=$NODENAME \
+--identity=<your_keybase_id> \
+--website="<your_website>" \
+--details="<your_validator_description>" \
+--chain-id=$CHAIN_ID \
+--from=$WALLET
 ```
 
 Unjail validator
 ```
-dewebd tx slashing unjail \
+uptickd tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
   --chain-id=$CHAIN_ID \
-  --gas=auto \
-  --fees=200udws
+  --gas=auto
 ```
 
 ### Delete node
 This commands will completely remove node from server. Use at your own risk!
 ```
-systemctl stop dewebd
-systemctl disable dewebd
-rm /etc/systemd/system/deweb* -rf
-rm $(which dewebd) -rf
-rm $HOME/.deweb* -rf
-rm $HOME/deweb -rf
+systemctl stop uptickd
+systemctl disable uptickd
+rm /etc/systemd/system/uptick* -rf
+rm $(which uptickd) -rf
+rm $HOME/.uptick* -rf
+rm $HOME/uptick -rf
 ```

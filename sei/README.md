@@ -1,5 +1,6 @@
 <p style="font-size:14px" align="right">
-<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://discord.gg/EY35ZzXY" target="_blank">Join our discord <img src="https://user-images.githubusercontent.com/50621007/176236430-53b0f4de-41ff-41f7-92a1-4233890a90c8.png" width="30"/></a>
 <a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
 </p>
 
@@ -49,6 +50,7 @@ wget -O sei.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/sei/s
 ### Option 2 (manual)
 You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/sei/manual_install.md) if you better prefer setting up node manually
 
+
 ## Chain upgrade from 1.0.2beta to 1.0.3beta
 Once the chain reaches the upgrade height, you will encounter the following panic error message:\
 `ERR UPGRADE "upgrade-1.0.3beta" NEEDED at height: 153759`
@@ -68,6 +70,18 @@ Once the chain reaches the upgrade height, you will encounter the following pani
 cd $HOME && rm $HOME/sei-chain -rf
 git clone https://github.com/sei-protocol/sei-chain.git && cd $HOME/sei-chain
 git checkout 1.0.4beta
+make install
+mv ~/go/bin/seid /usr/local/bin/seid
+systemctl restart seid && journalctl -fu seid -o cat
+```
+
+## Chain upgrade from 1.0.4beta to 1.0.5beta
+Once the chain reaches the upgrade height, you will encounter the following panic error message:\
+`ERR UPGRADE "upgrade-1.0.5beta" NEEDED at height: 1059047`
+```
+cd $HOME && rm $HOME/sei-chain -rf
+git clone https://github.com/sei-protocol/sei-chain.git && cd $HOME/sei-chain
+git checkout 1.0.5beta
 make install
 mv ~/go/bin/seid /usr/local/bin/seid
 systemctl restart seid && journalctl -fu seid -o cat
@@ -292,9 +306,9 @@ Edit validator
 ```
 seid tx staking edit-validator \
   --moniker=$NODENAME \
-  --identity=1C5ACD2EEF363C3A \
-  --website="http://kjnodes.com" \
-  --details="Providing professional staking services with high performance and availability. Find me at Discord: kjnodes#8455 and Telegram: @kjnodes" \
+  --identity=<your_keybase_id> \
+  --website="<your_website>" \
+  --details="<your_validator_description>" \
   --chain-id=$SEI_CHAIN_ID \
   --from=$WALLET
 ```

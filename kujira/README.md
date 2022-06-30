@@ -1,5 +1,6 @@
 <p style="font-size:14px" align="right">
-<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://discord.gg/EY35ZzXY" target="_blank">Join our discord <img src="https://user-images.githubusercontent.com/50621007/176236430-53b0f4de-41ff-41f7-92a1-4233890a90c8.png" width="30"/></a>
 <a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
 </p>
 
@@ -11,7 +12,7 @@
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/172356220-b8326ceb-9950-4226-b66e-da69099aaf6e.png">
 </p>
 
-# kujira node setup for Testnet — harpoon-4
+# kujira node setup for mainnet — kaiyo-1
 
 Official documentation:
 >- [Validator setup instructions](https://docs.kujira.app/run-a-node)
@@ -31,13 +32,13 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
  - 3x CPUs; the faster clock speed the better
  - 4GB RAM
  - 80GB Disk
- - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+ - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
 ### Recommended Hardware Requirements 
  - 4x CPUs; the faster clock speed the better
  - 8GB RAM
  - 200GB of storage (SSD or NVME)
- - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+ - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
 ## Set up your kujira fullnode
 ### Option 1 (automatic)
@@ -61,6 +62,21 @@ Next you have to make sure your validator is syncing blocks. You can use command
 kujirad status 2>&1 | jq .SyncInfo
 ```
 
+### (OPTIONAL) Disable and cleanup indexing
+```
+indexer="null"
+sed -i -e "s/^indexer *=.*/indexer = \"$indexer\"/" $HOME/.kujira/config/config.toml
+sudo systemctl restart kujirad
+sleep 3
+sudo rm -rf $HOME/.kujira/data/tx_index.db
+```
+
+### (OPTIONAL) State Sync
+You can state sync your node in minutes by running commands below. Special thanks to `polkachu | polkachu.com#1249`
+```
+N/A
+```
+
 ### Create wallet
 To create new wallet you can use command below. Don’t forget to save the mnemonic
 ```
@@ -78,22 +94,18 @@ kujirad keys list
 ```
 
 ### Save wallet info
-Add wallet and valoper address and load variables into the system
+Add wallet and valoper address into variables 
 ```
 KUJIRA_WALLET_ADDRESS=$(kujirad keys show $WALLET -a)
+```
+```
 KUJIRA_VALOPER_ADDRESS=$(kujirad keys show $WALLET --bech val -a)
+```
+Load variables into the system
+```
 echo 'export KUJIRA_WALLET_ADDRESS='${KUJIRA_WALLET_ADDRESS} >> $HOME/.bash_profile
 echo 'export KUJIRA_VALOPER_ADDRESS='${KUJIRA_VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
-```
-
-### Fund your wallet
-In order to create validator first you need to fund your wallet with testnet tokens.
-To top up your wallet join [Kujira discord server](https://discord.gg/JFmgazu2) and navigate to **#faucet-requests** channel
-
-To request a faucet grant:
-```
-!faucet <YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
@@ -261,9 +273,9 @@ Edit validator
 ```
 kujirad tx staking edit-validator \
   --moniker=$NODENAME \
-  --identity=1C5ACD2EEF363C3A \
-  --website="http://kjnodes.com" \
-  --details="Providing professional staking services with high performance and availability. Find me at Discord: kjnodes#8455 and Telegram: @kjnodes" \
+  --identity=<your_keybase_id> \
+  --website="<your_website>" \
+  --details="<your_validator_description>" \
   --chain-id=$KUJIRA_CHAIN_ID \
   --from=$WALLET
 ```

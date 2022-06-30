@@ -1,5 +1,6 @@
 <p style="font-size:14px" align="right">
-<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://discord.gg/EY35ZzXY" target="_blank">Join our discord <img src="https://user-images.githubusercontent.com/50621007/176236430-53b0f4de-41ff-41f7-92a1-4233890a90c8.png" width="30"/></a>
 <a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
 </p>
 
@@ -17,7 +18,7 @@
 > ```
 > If you have only `testnet-validator-1` container running please [cleanup your node](https://github.com/kj89/testnet_manuals/tree/main/aptos/testnet#clean-up-preveous-installation) or completely rebuild VPS from scratch and re-submit [VALIDATOR VERIFICATION FORM](https://community.aptoslabs.com)
 
-# Aptos validator node setup for Incentivized Testnet (Updated 18.05.2022)
+# Aptos validator node setup for Incentivized Testnet (Updated 30.06.2022)
 Official documents:
 > [Run a Validator Node](https://aptos.dev/tutorials/validator-node/intro)
 

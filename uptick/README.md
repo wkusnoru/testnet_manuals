@@ -1,5 +1,6 @@
 <p style="font-size:14px" align="right">
-<a href="https://t.me/kjnotes" target="_blank">Join our telegram <img src="https://user-images.githubusercontent.com/50621007/168689534-796f181e-3e4c-43a5-8183-9888fc92cfa7.png" width="30"/></a>
+<a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
+<a href="https://discord.gg/EY35ZzXY" target="_blank">Join our discord <img src="https://user-images.githubusercontent.com/50621007/176236430-53b0f4de-41ff-41f7-92a1-4233890a90c8.png" width="30"/></a>
 <a href="https://kjnodes.com/" target="_blank">Visit our website <img src="https://user-images.githubusercontent.com/50621007/168689709-7e537ca6-b6b8-4adc-9bd0-186ea4ea4aed.png" width="30"/></a>
 </p>
 
@@ -24,6 +25,21 @@ Explorer:
 >
 > To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/uptick/migrate_validator.md)
 
+## Hardware Requirements
+Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
+
+### Minimum Hardware Requirements
+ - 3x CPUs; the faster clock speed the better
+ - 4GB RAM
+ - 80GB Disk
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+
+### Recommended Hardware Requirements 
+ - 4x CPUs; the faster clock speed the better
+ - 8GB RAM
+ - 200GB of storage (SSD or NVME)
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+
 ## Set up your uptick fullnode
 ### Option 1 (automatic)
 You can setup your uptick fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
@@ -46,6 +62,22 @@ Next you have to make sure your validator is syncing blocks. You can use command
 uptickd status 2>&1 | jq .SyncInfo
 ```
 
+### (OPTIONAL) State Sync
+You can state sync your node in minutes by running commands below. Special thanks to `polkachu | polkachu.com#1249`
+```
+SNAP_RPC1="http://peer0.testnet.uptick.network:26657" \
+&& SNAP_RPC2="http://peer1.testnet.uptick.network:26657"
+LATEST_HEIGHT=$(curl -s $SNAP_RPC2/block | jq -r .result.block.header.height) \
+&& BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)) \
+&& TRUST_HASH=$(curl -s "$SNAP_RPC2/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
+sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
+s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC1,$SNAP_RPC2\"| ; \
+s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
+s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.uptickd/config/config.toml
+uptickd tendermint unsafe-reset-all --home $HOME/.uptickd
+sudo systemctl restart uptickd && journalctl -fu uptickd -o cat
+```
+
 ### Create wallet
 To create new wallet you can use command below. Don’t forget to save the mnemonic
 ```
@@ -63,20 +95,12 @@ uptickd keys list
 ```
 
 ### Save wallet info
-Add wallet address
+Add wallet and valoper address and load variables into the system
 ```
-WALLET_ADDRESS=$(uptickd keys show $WALLET -a)
-```
-
-Add valoper address
-```
-VALOPER_ADDRESS=$(uptickd keys show $WALLET --bech val -a)
-```
-
-Load variables into system
-```
-echo 'export WALLET_ADDRESS='${WALLET_ADDRESS} >> $HOME/.bash_profile
-echo 'export VALOPER_ADDRESS='${VALOPER_ADDRESS} >> $HOME/.bash_profile
+UPTICK_WALLET_ADDRESS=$(uptickd keys show $WALLET -a)
+UPTICK_VALOPER_ADDRESS=$(uptickd keys show $WALLET --bech val -a)
+echo 'export UPTICK_WALLET_ADDRESS='${UPTICK_WALLET_ADDRESS} >> $HOME/.bash_profile
+echo 'export UPTICK_VALOPER_ADDRESS='${UPTICK_VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
@@ -94,14 +118,14 @@ Before creating validator please make sure that you have at least 1 uptick (1 up
 
 To check your wallet balance:
 ```
-uptickd query bank balances $WALLET_ADDRESS
+uptickd query bank balances $UPTICK_WALLET_ADDRESS
 ```
 > If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue 
 
 To create your validator run command below
 ```
 uptickd tx staking create-validator \
-  --amount 5000000000000000000auptick \
+  --amount 1000000auptick \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
@@ -109,7 +133,7 @@ uptickd tx staking create-validator \
   --min-self-delegation "1" \
   --pubkey  $(uptickd tendermint show-validator) \
   --moniker $NODENAME \
-  --chain-id $CHAIN_ID
+  --chain-id $UPTICK_CHAIN_ID
 ```
 
 ## Security
@@ -130,7 +154,7 @@ sudo ufw default allow outgoing
 sudo ufw default deny incoming
 sudo ufw allow ssh/tcp
 sudo ufw limit ssh/tcp
-sudo ufw allow 26656,26660/tcp
+sudo ufw allow ${UPTICK_PORT}656,${UPTICK_PORT}660/tcp
 sudo ufw enable
 ```
 
@@ -144,9 +168,14 @@ It measures average blocks per minute that are being synchronized for period of 
 wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/uptick/tools/synctime.py && python3 ./synctime.py
 ```
 
+### Get list of validators
+```
+uptickd q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
+```
+
 ## Get currently connected peer list with ids
 ```
-curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
+curl -sS http://localhost:${UPTICK_PORT}657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
 ```
 
 ## Usefull commands
@@ -158,17 +187,17 @@ journalctl -fu uptickd -o cat
 
 Start service
 ```
-systemctl start uptickd
+sudo systemctl start uptickd
 ```
 
 Stop service
 ```
-systemctl stop uptickd
+sudo systemctl stop uptickd
 ```
 
 Restart service
 ```
-systemctl restart uptickd
+sudo systemctl restart uptickd
 ```
 
 ### Node info
@@ -210,50 +239,50 @@ uptickd keys delete $WALLET
 
 Get wallet balance
 ```
-uptickd query bank balances $WALLET_ADDRESS
+uptickd query bank balances $UPTICK_WALLET_ADDRESS
 ```
 
 Transfer funds
 ```
-uptickd tx bank send $WALLET_ADDRESS <TO_WALLET_ADDRESS> 10000000auptick
+uptickd tx bank send $UPTICK_WALLET_ADDRESS <TO_UPTICK_WALLET_ADDRESS> 10000000auptick
 ```
 
 ### Voting
 ```
-uptickd tx gov vote 1 yes --from $WALLET --chain-id=$CHAIN_ID
+uptickd tx gov vote 1 yes --from $WALLET --chain-id=$UPTICK_CHAIN_ID
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-uptickd tx staking delegate $VALOPER_ADDRESS 10000000auptick --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+uptickd tx staking delegate $UPTICK_VALOPER_ADDRESS 10000000auptick --from=$WALLET --chain-id=$UPTICK_CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-uptickd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000auptick --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+uptickd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000auptick --from=$WALLET --chain-id=$UPTICK_CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
 ```
-uptickd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$CHAIN_ID --gas=auto
+uptickd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$UPTICK_CHAIN_ID --gas=auto
 ```
 
 Withdraw rewards with commision
 ```
-uptickd tx distribution withdraw-rewards $VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$CHAIN_ID
+uptickd tx distribution withdraw-rewards $UPTICK_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$UPTICK_CHAIN_ID
 ```
 
 ### Validator management
 Edit validator
 ```
 uptickd tx staking edit-validator \
---moniker=$NODENAME \
---identity=1C5ACD2EEF363C3A \
---website="http://kjnodes.com" \
---details="Providing professional staking services with high performance and availability. Find me at Discord: kjnodes#8455 and Telegram: @kjnodes" \
---chain-id=$CHAIN_ID \
---from=$WALLET
+  --moniker=$NODENAME \
+  --identity=<your_keybase_id> \
+  --website="<your_website>" \
+  --details="<your_validator_description>" \
+  --chain-id=$UPTICK_CHAIN_ID \
+  --from=$WALLET
 ```
 
 Unjail validator
@@ -261,17 +290,17 @@ Unjail validator
 uptickd tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
-  --chain-id=$CHAIN_ID \
+  --chain-id=$UPTICK_CHAIN_ID \
   --gas=auto
 ```
 
 ### Delete node
 This commands will completely remove node from server. Use at your own risk!
 ```
-systemctl stop uptickd
-systemctl disable uptickd
-rm /etc/systemd/system/uptick* -rf
-rm $(which uptickd) -rf
-rm $HOME/.uptick* -rf
-rm $HOME/uptick -rf
+sudo systemctl stop uptickd
+sudo systemctl disable uptickd
+sudo rm /etc/systemd/system/uptick* -rf
+sudo rm $(which uptickd) -rf
+sudo rm $HOME/.uptickd* -rf
+sudo rm $HOME/uptick -rf
 ```
