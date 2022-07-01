@@ -12,9 +12,10 @@
   <img width="100" height="auto" src="https://user-images.githubusercontent.com/50621007/165930080-4f541b46-1ae3-461c-acc9-de72d7ab93b7.png">
 </p>
 
-# Aptos validator node setup for Incentivized Testnet (Updated 30.06.2022)
+# Aptos validator node setup for AIT2 (Updated 30.06.2022)
 Official documents:
 > [Run a Validator Node](https://aptos.dev/tutorials/validator-node/intro)
+> [Node Tester by Andrew | zValid](https://node.aptos.zvalid.com/)
 
 ## Hardware requirements:
 #### For running an aptos node on incentivized testnet we recommend the following:
@@ -39,11 +40,11 @@ source $HOME/.bash_profile
 ```
 
 ## Check your node health
-1. Navigate to https://aptos-node.info/
-2. Enter your node public IP address
+1. Navigate to https://node.aptos.zvalid.com/
+2. Enter your node public IP address adn change API port to `80`
 3. You should see data like in example below:
 
-![image](https://user-images.githubusercontent.com/50621007/168446824-2be781b5-1288-48cb-a9e9-0e2ea922be5c.png)
+![image](https://user-images.githubusercontent.com/50621007/176846383-7ebe2df6-17ec-41c6-bd34-d7c796761a36.png)
 
 ## Register your node for Aptos Incentivized Testnet
 1. Head to [community.aptoslabs.com](https://community.aptoslabs.com) and *Sign Up* using one of provided methods
