@@ -14,7 +14,7 @@
 
 # Aptos validator node setup for AIT2 (Updated 30.06.2022)
 Official documents:
-> [Run a Validator Node](https://aptos.dev/tutorials/validator-node/intro)
+> [Run a Validator Node](https://aptos.dev/tutorials/validator-node/intro)\
 > [Node Tester by Andrew | zValid](https://node.aptos.zvalid.com/)
 
 ## Hardware requirements:
@@ -56,17 +56,9 @@ cat ~/$WORKSPACE/$NODENAME.yaml
 
 You can find example below:
 
-![2022-05-14_02h26_49](https://user-images.githubusercontent.com/50621007/168401158-72557d7e-fb9b-4b49-a44b-a9161c2624e5.png)
+![image](https://user-images.githubusercontent.com/50621007/176886734-46e938fc-9b44-498b-92ec-d99c605f365d.png)
 
 4. Complete KYC process
-
-## Clean up preveous installation
-(**WARNING!**) Before this step make sure you have backed up your Aptos keys as this step will completely remove your Aptos working directory
-```
-cd ~/$WORKSPACE && docker compose down; cd
-rm ~/$WORKSPACE -rf
-unset NODENAME
-```
 
 ## Useful commands
 ### Check validator node logs
@@ -79,7 +71,39 @@ docker logs -f testnet-validator-1 --tail 50
 curl 127.0.0.1:9101/metrics 2> /dev/null | grep aptos_state_sync_version | grep type
 ```
 
-### Restart docker containers
+### Restart docker container
 ```
-docker compose restart
+docker restart validator-fullnode-1
+```
+
+## Clean up preveous installation
+(**WARNING!**) Before this step make sure you have backed up your Aptos keys as this step will completely remove your Aptos working directory
+```
+cd ~/$WORKSPACE && docker compose down; cd
+rm ~/$WORKSPACE -rf
+docker volume rm aptos-validator
+unset NODENAME
+```
+
+## (OPTIONAL) You can install fullnode on a seperate machine but its optional
+Guide can be found [here](https://github.com/kj89/testnet_manuals/blob/main/aptos/testnet/fullnode_manual_install.md)
+
+# Issues with Aptos node
+## If you experience this error when registering node
+`NodeChecker Error: 859: unexpected token at 'Failed to evaluate TPS: Error from within the transaction emitter: Request failed: RestError { code: 400, message: "invalid transaction: INVALID_AUTH_KEY", aptos_ledger_version: None }`
+
+![image](https://user-images.githubusercontent.com/50621007/176991421-71492723-d13f-4e13-b931-8fc93a8d4cc2.png)
+
+Please run following script to fix it (your validator node will have to resync from scratch)
+```
+wget -qO fix_auth_error.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/aptos/testnet/fix_auth_error.sh && chmod +x fix_auth_error.sh && ./fix_auth_error.sh
+```
+>PS: if you run a full node, don't forget to update the waypoint.txt and genesis.blob files there too.
+
+## To change default API port from 80 to 8080
+```
+cd ~/$WORKSPACE
+wget -qO docker-compose.yaml https://raw.githubusercontent.com/kj89/testnet_manuals/main/aptos/testnet/docker-compose.yaml
+docker compose down
+docker compose up -d
 ```

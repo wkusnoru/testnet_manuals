@@ -28,7 +28,7 @@ echo "export NODENAME=$NODENAME" >> $HOME/.bash_profile
 if [ ! $WALLET ]; then
 	echo "export WALLET=wallet" >> $HOME/.bash_profile
 fi
-echo "export PALOMA_CHAIN_ID=paloma-testnet-5" >> $HOME/.bash_profile
+echo "export PALOMA_CHAIN_ID=paloma-testnet-6" >> $HOME/.bash_profile
 echo "export PALOMA_PORT=${PALOMA_PORT}" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
@@ -58,7 +58,7 @@ go version
 
 ## Download and build binaries
 ```
-wget -O - https://github.com/palomachain/paloma/releases/download/v0.2.4-prealpha/paloma_0.2.4-prealpha_Linux_x86_64.tar.gz | \
+wget -O - https://github.com/palomachain/paloma/releases/download/v0.2.5-prealpha/paloma_0.2.5-prealpha_Linux_x86_64.tar.gz | \
 sudo tar -C /usr/local/bin -xvzf - palomad
 sudo chmod +x /usr/local/bin/palomad
 sudo wget -P /usr/lib https://github.com/CosmWasm/wasmvm/raw/main/api/libwasmvm.x86_64.so
@@ -78,14 +78,14 @@ palomad init $NODENAME --chain-id $PALOMA_CHAIN_ID
 
 ## Download genesis and addrbook
 ```
-wget -O ~/.paloma/config/genesis.json https://raw.githubusercontent.com/palomachain/testnet/master/paloma-testnet-5/genesis.json
-wget -O ~/.paloma/config/addrbook.json https://raw.githubusercontent.com/palomachain/testnet/master/paloma-testnet-5/addrbook.json
+wget -O ~/.paloma/config/genesis.json https://raw.githubusercontent.com/palomachain/testnet/master/paloma-testnet-6/genesis.json
+wget -O ~/.paloma/config/addrbook.json https://raw.githubusercontent.com/palomachain/testnet/master/paloma-testnet-6/addrbook.json
 ```
 
 ## Set seeds and peers
 ```
 SEEDS=""
-PEERS="fae84ec72a6f686d76096053e0532a65b69e5228@143.198.169.111:26656,3a06e1d98f831963a09a16561c4125e4eec5ed06@195.3.223.33:30656,f9d0db52347811f07b0aab4047099281ed042533@88.208.57.200:36656,e1efddf3b39f1953590f8264d30d71d1a1313061@164.90.134.139:26656,301938da656d6224fdd35f806b1d2b67d94d8d36@34.69.131.169:26656,5d8e547ebe3c6b62a043f52ffc379898ce3ef578@128.199.229.55:36416,3a06e1d98f831963a09a16561c4125e4eec5ed06@195.3.223.33:30656,eb33a25834f0368c91bdc33c6178efa45b48e15f@142.93.222.212:36416,22ce759d389de8c0ef14710916ddba05246bce31@35.232.220.104:26656,368f268011d047a25ba1e658b29d8d68695eaefe@20.56.69.130:26656"
+PEERS="d6ee6c3ccc5d307600fc9d01619b4eae2ad331da@217.79.187.35:26656,98bbed8647e2bd80d169ed7ae04e41e82f24594f@65.21.181.135:36656,b159364b4e6a3036c36ef6c7c690c5fbc81fa9c4@65.108.71.92:54056,3f053da998299894a4574720629780fcafa5875c@138.201.139.175:20456,e4b7cdd48c39c355e9a3480f4f4d5afab8fb0e08@46.0.203.78:26637,983c19423a0c9a4a444d6ccd76a73ecac523b868@78.47.128.136:26656,26f67d710b591bb2b7efd4f339daac56ca5e7e41@194.163.172.204:26656,a25f8bc10d9b3834e2834ac8231152fa862e7160@38.242.242.189:36416,68e4fb7ed3c792a3cf6f8c43d984d23c513b66f4@146.19.24.34:16656"
 sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.paloma/config/config.toml
 ```
 

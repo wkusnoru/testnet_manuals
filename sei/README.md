@@ -87,13 +87,8 @@ mv ~/go/bin/seid /usr/local/bin/seid
 systemctl restart seid && journalctl -fu seid -o cat
 ```
 
-## Optimize validator config
-![image](https://user-images.githubusercontent.com/50621007/176101397-cbc216a4-1c11-4d1e-9e1d-33a84280d508.png)
-```
-wget -qO optimize-configs.sh https://raw.githubusercontent.com/sei-protocol/testnet/main/sei-testnet-2/optimize-configs.sh
-sudo chmod +x optimize-configs.sh && ./optimize-configs.sh
-sudo systemctl restart seid
-```
+## Chain upgrade from 1.0.5beta to 1.0.6beta
+Follow instructions mentioned [here](https://github.com/kj89/testnet_manuals/blob/main/sei/sei_upgrade_106beta.md)
 
 ## Post installation
 

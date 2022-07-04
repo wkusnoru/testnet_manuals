@@ -52,7 +52,7 @@ fi
 
 # download aptos-cli
 wget -qO aptos-cli.zip https://github.com/aptos-labs/aptos-core/releases/download/aptos-cli-0.2.0/aptos-cli-0.2.0-Ubuntu-x86_64.zip
-unzip -o aptos-cli.zip -d /usr/local/bin
+sudo unzip -o aptos-cli.zip -d /usr/local/bin
 chmod +x /usr/local/bin/aptos
 rm aptos-cli.zip
 
@@ -72,15 +72,10 @@ aptos genesis set-validator-configuration \
   --username $NODENAME \
   --validator-host $PUBLIC_IP:6180
   
-# generate root key
-mkdir keys
-aptos key generate --assume-yes --output-file keys/root
-ROOT_KEY="0x"$(cat ~/$WORKSPACE/keys/root.pub)
-
 # add layout file
 sudo tee layout.yaml > /dev/null <<EOF
 ---
-root_key: "$ROOT_KEY"
+root_key: "F22409A93D1CD12D2FC92B5F8EB84CDCD24C348E32B3E7A720F3D2E288E63394"
 users:
   - $NODENAME
 chain_id: 40
