@@ -61,7 +61,9 @@ Change `<Validator IP Address>` to your validator IP
 
 Press `Ctrl + X` then press `Y` and `Enter` to save changes to file
 
-### Copy the validator-full-node-identity.yaml, genesis.blob and waypoint.txt files generated above into the same working directory on Fullnode machine
+### Copy the validator-full-node-identity.yaml, genesis.blob and waypoint.txt files from validator node into the same working directory on Fullnode machine
+
+![image](https://user-images.githubusercontent.com/50621007/177649057-250e4b25-c0c4-44ec-9f10-bb80a46ffdac.png)
 
 ### Run docker compose
 ```
