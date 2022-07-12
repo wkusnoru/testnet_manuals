@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/166148846-93575afe-e3ce-4ca5-a3f7-a21e8a8609cb.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/178371956-ec2a172b-0fe8-4e13-b3a9-0d6cdc6fcd48.png">
 </p>
 
-# Set up monitoring and alerting for quicksilver validator
+# Set up monitoring and alerting for Cardchain validator
 
 ## Prerequisites
 
@@ -24,8 +24,8 @@ wget -O install_exporters.sh https://raw.githubusercontent.com/kj89/cosmos_node_
 
 | KEY |VALUE |
 |---------------|-------------|
-| **bond_denom** | Denominated token name, for example, `uqck` for quicksilver testnet. You can find it in genesis file |
-| **bench_prefix** | Prefix for chain addresses, for example, `quick` for quicksilver testnet. You can find it in public addresses like this **quick**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
+| **bond_denom** | Denominated token name, for example, `ubpf` for Cardchain testnet. You can find it in genesis file |
+| **bench_prefix** | Prefix for chain addresses, for example, `Cardchain` for Cardchain testnet. You can find it in public addresses like this **Cardchain**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
 
 make sure following ports are open:
 - `9100` (node-exporter)
@@ -36,7 +36,7 @@ prometheus metrics should be `enabled` and port `26660` should be available on v
 To enable prometheus you have to run command below and after that please restart service to apply changes
 ```
 # enable prometheus
-sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.quicksilverd/config/config.toml
+sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.Cardchain/config/config.toml
 ```
 
 ## Deployment
@@ -74,12 +74,12 @@ source $HOME/.bash_profile
 ```
 
 ### Add validator into _prometheus_ configuration file
-To add validator use command with specified `VALIDATOR_IP`, `QUICKSILVER_VALOPER_ADDRESS`, `QUICKSILVER_WALLET_ADDRESS` and `PROJECT_NAME`
+To add validator use command with specified `VALIDATOR_IP`, `CARDCHAIN_VALOPER_ADDRESS`, `CARDCHAIN_WALLET_ADDRESS` and `PROJECT_NAME`
 ```
-$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP QUICKSILVER_VALOPER_ADDRESS QUICKSILVER_WALLET_ADDRESS PROJECT_NAME
+$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP CARDCHAIN_VALOPER_ADDRESS CARDCHAIN_WALLET_ADDRESS PROJECT_NAME
 ```
 
-> example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 quickvaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete quick1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc quicksilver```
+> example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 Cardchainvaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete Cardchain1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc Cardchain```
 
 To add more validators just run command above with validator values
 
