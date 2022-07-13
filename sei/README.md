@@ -50,6 +50,13 @@ wget -O sei.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/sei/s
 ### Option 2 (manual)
 You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/sei/manual_install.md) if you better prefer setting up node manually
 
+## Post installation
+
+When installation is finished please load variables into system
+```
+source $HOME/.bash_profile
+```
+
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 ```
 seid status 2>&1 | jq .SyncInfo
@@ -82,7 +89,12 @@ source $HOME/.bash_profile
 ```
 
 ### Fund your wallet
-To create a validator you have to wait. Team will send you tokens once its yoru turn in weekly validator rotation
+To top up your wallet join [Sei discord server](https://discord.gg/sPsUN6ay) and navigate to **#atlantic-1-faucet** channel
+
+To request a faucet grant:
+```
+!faucet <YOUR_WALLET_ADDRESS>
+```
 
 ### Create validator
 Before creating validator please make sure that you have at least 1 sei (1 sei is equal to 1000000 usei) and your node is synchronized
