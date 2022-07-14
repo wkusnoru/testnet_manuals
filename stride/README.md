@@ -107,12 +107,7 @@ strided keys list
 Add wallet and valoper address into variables 
 ```
 STRIDE_WALLET_ADDRESS=$(strided keys show $WALLET -a)
-```
-```
 STRIDE_VALOPER_ADDRESS=$(strided keys show $WALLET --bech val -a)
-```
-Load variables into the system
-```
 echo 'export STRIDE_WALLET_ADDRESS='${STRIDE_WALLET_ADDRESS} >> $HOME/.bash_profile
 echo 'export STRIDE_VALOPER_ADDRESS='${STRIDE_VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
@@ -351,4 +346,5 @@ sudo rm /etc/systemd/system/stride* -rf
 sudo rm $(which strided) -rf
 sudo rm $HOME/.stride* -rf
 sudo rm $HOME/stride -rf
+sed -i '/STRIDE_/d' ~/.bash_profile
 ```
