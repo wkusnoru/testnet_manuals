@@ -17,7 +17,7 @@ If you want to setup fullnode manually follow the steps below
 
 ## Save network configuration to file
 ```
-curl https://ollinet.agoric.net/network-config > $HOME/agoric/chain.json
+curl https://emerynet.agoric.net/network-config > $HOME/chain.json
 ```
 
 ## Setting up vars
@@ -40,7 +40,7 @@ sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bs
 ```
 echo "export NODENAME=$NODENAME" >> $HOME/.bash_profile
 echo "export WALLET=wallet" >> $HOME/.bash_profile
-echo "export CHAIN_ID=$(jq -r .chainName < $HOME/agoric/chain.json)" >> $HOME/.bash_profile
+echo "export CHAIN_ID=$(jq -r .chainName < $HOME/chain.json)" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
@@ -71,7 +71,7 @@ fi
 ```
 git clone https://github.com/Agoric/ag0
 cd ag0
-git checkout agoric-upgrade-5
+git checkout agoric-upgrade-6
 make build
 . $HOME/.bash_profile
 cp $HOME/ag0/build/ag0 /usr/local/bin
@@ -90,15 +90,15 @@ ag0 init $NODENAME --chain-id $CHAIN_ID
 
 ## Download genesis file
 ```
-curl https://ollinet.rpc.agoric.net/genesis | jq .result.genesis > $HOME/.agoric/config/genesis.json 
+curl https://emerynet.rpc.agoric.net/genesis | jq .result.genesis > $HOME/.agoric/config/genesis.json 
 ```
 
 ## Set seeds and peers
 ```
-peers=$(jq '.peers | join(",")' < $HOME/chain.json)
-peers="fb86a0993c694c981a28fa1ebd1fd692f345348b@35.226.232.179:26656,f30a36fe5f5048a482d83c3bb873e1c64aa617aa@35.226.248.0:26656,686de39b047e38db41b42cf676eb68335d81fca7@139.59.146.53:27656,09c077f40c2384b64a5d7800a539d12a300e16d1@95.216.208.150:29656"
-seeds=$(jq '.seeds | join(",")' < $HOME/chain.json)
-sed -i.bak -e "s/^seeds *=.*/seeds = $seeds/; s/^persistent_peers *=.*/persistent_peers = $peers/" $HOME/.agoric/config/config.toml
+PEERS=$(jq '.peers | join(",")' < $HOME/chain.json)
+SEEDS=$(jq '.seeds | join(",")' < $HOME/chain.json)
+PEERS="686de39b047e38db41b42cf676eb68335d81fca7@139.59.146.53:27656,ca166d3c56c6cf05c3e9ebb6a170a6986eead9a0@34.130.175.164:26656,32f7fbecd40b420d592ac460703c4ac647875566@65.109.23.238:26656,6322a00ac7f59b393681d824a61a970a79d066e6@162.55.169.76:26656,4738ce5158849c219c25a4fa7d64abfd1f4f31bb@65.109.23.46:26656,f48024436fcdf9e3199106ec6d6624d6089de378@97.122.229.225:44656,528bb854342f9906c039811cdf7d542bb262e929@35.226.248.0:26656,14dcf9ee440ed783cd321bed9523117e2d4afde1@167.86.104.139:26656"
+sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.agoric/config/config.toml
 ```
 
 # Fix `Error: failed to parse log level`
@@ -164,6 +164,6 @@ EOF
 ## Register and start service
 ```
 sudo systemctl daemon-reload
-sudo systemctl enable ag0
-sudo systemctl restart ag0
+sudo systemctl enable agoricd
+sudo systemctl restart agoricd
 ```
