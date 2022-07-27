@@ -9,10 +9,10 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/177221972-75fcf1b3-6e95-44dd-b43e-e32377685af8.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/181202199-ec65c529-8f92-4083-9841-77e48e47ba03.png">
 </p>
 
-# Set up monitoring and alerting for stride validator
+# Set up monitoring and alerting for juno validator
 
 ## Prerequisites
 
@@ -24,10 +24,10 @@ wget -O install_exporters.sh https://raw.githubusercontent.com/kj89/cosmos_node_
 
 | KEY |VALUE |
 |---------------|-------------|
-| **bond_denom** | Denominated token name, for example, `ustrd` for stride testnet. You can find it in genesis file |
-| **bench_prefix** | Prefix for chain addresses, for example, `stride` for stride testnet. You can find it in public addresses like this **stride**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
-| **rpc_port** | Your validator `rpc` port that is defined in `config.toml` file. Default value for stride is `16657` |
-| **grpc_port** | Your validator `grpc` port that is defined in `app.toml` file. Default value for stride is `16090` |
+| **bond_denom** | Denominated token name, for example, `ujunox` for juno testnet. You can find it in genesis file |
+| **bench_prefix** | Prefix for chain addresses, for example, `juno` for juno testnet. You can find it in public addresses like this **juno**_valoper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete_ |
+| **rpc_port** | Your validator `rpc` port that is defined in `config.toml` file. Default value for juno is `16657` |
+| **grpc_port** | Your validator `grpc` port that is defined in `app.toml` file. Default value for juno is `16090` |
 
 make sure following ports are open:
 - `9100` (node-exporter)
@@ -38,7 +38,7 @@ prometheus metrics should be `enabled` and port `26660` should be available on v
 To enable prometheus you have to run command below and after that please restart service to apply changes
 ```
 # enable prometheus
-sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.stride/config/config.toml
+sed -i -e "s/prometheus = false/prometheus = true/" $HOME/.juno/config/config.toml
 ```
 
 ## Deployment
@@ -76,12 +76,12 @@ source $HOME/.bash_profile
 ```
 
 ### Add validator into _prometheus_ configuration file
-To add validator use command with specified `VALIDATOR_IP`, `STRIDE_VALOPER_ADDRESS`, `STRIDE_WALLET_ADDRESS` and `PROJECT_NAME`
+To add validator use command with specified `VALIDATOR_IP`, `JUNO_VALOPER_ADDRESS`, `JUNO_WALLET_ADDRESS` and `PROJECT_NAME`
 ```
-$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP STRIDE_VALOPER_ADDRESS STRIDE_WALLET_ADDRESS PROJECT_NAME
+$HOME/cosmos_node_monitoring/add_validator.sh VALIDATOR_IP JUNO_VALOPER_ADDRESS JUNO_WALLET_ADDRESS PROJECT_NAME
 ```
 
-> example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 stridevaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete stride1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc stride```
+> example: ```$HOME/cosmos_node_monitoring/add_validator.sh 1.2.3.4 junovaloper1zyyz4m9ytdf60fn9yaafx7uy7h463n7alv2ete juno1zyyz4m9ytdf60fn9yaafx7uy7h463n7a05eshc juno```
 
 To add more validators just run command above with validator values
 

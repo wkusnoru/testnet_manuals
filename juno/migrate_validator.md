@@ -9,44 +9,44 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/177221972-75fcf1b3-6e95-44dd-b43e-e32377685af8.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/181202199-ec65c529-8f92-4083-9841-77e48e47ba03.png">
 </p>
 
 # Migrate your validator to another machine
 
 ### 1. Run a new full node on a new machine
-To setup full node you can follow my guide [stride node setup for testnet](https://github.com/kj89/testnet_manuals/blob/main/stride/README.md)
+To setup full node you can follow my guide [juno node setup for testnet](https://github.com/kj89/testnet_manuals/blob/main/juno/README.md)
 
 ### 2. Confirm that you have the recovery seed phrase information for the active key running on the old machine
 
 #### To backup your key
 ```
-strided keys export mykey
+junod keys export mykey
 ```
 > _This prints the private key that you can then paste into the file `mykey.backup`_
 
 #### To get list of keys
 ```
-strided keys list
+junod keys list
 ```
 
 ### 3. Recover the active key of the old machine on the new machine
 
 #### This can be done with the mnemonics
 ```
-strided keys add mykey --recover
+junod keys add mykey --recover
 ```
 
 #### Or with the backup file `mykey.backup` from the previous step
 ```
-strided keys import mykey mykey.backup
+junod keys import mykey mykey.backup
 ```
 
 ### 4. Wait for the new full node on the new machine to finish catching-up
 
 #### To check synchronization status
 ```
-strided status 2>&1 | jq .SyncInfo
+junod status 2>&1 | jq .SyncInfo
 ```
 > _`catching_up` should be equal to `false`_
 
@@ -57,34 +57,34 @@ strided status 2>&1 | jq .SyncInfo
 
 #### Stop and disable service on old machine
 ```
-sudo systemctl stop strided
-sudo systemctl disable strided
+sudo systemctl stop junod
+sudo systemctl disable junod
 ```
 > _The validator should start missing blocks at this point_
 
 ### 6. Stop service on new machine
 ```
-sudo systemctl stop strided
+sudo systemctl stop junod
 ```
 
 ### 7. Move the validator's private key from the old machine to the new machine
-#### Private key is located in: `~/.strided/config/priv_validator_key.json`
+#### Private key is located in: `~/.junod/config/priv_validator_key.json`
 
 > _After being copied, the key `priv_validator_key.json` should then be removed from the old node's config directory to prevent double-signing if the node were to start back up_
 ```
-sudo mv ~/.strided/config/priv_validator_key.json ~/.strided/bak_priv_validator_key.json
+sudo mv ~/.junod/config/priv_validator_key.json ~/.junod/bak_priv_validator_key.json
 ```
 
 ### 8. Start service on a new validator node
 ```
-sudo systemctl start strided
+sudo systemctl start junod
 ```
 > _The new node should start signing blocks once caught-up_
 
 ### 9. Make sure your validator is not jailed
 #### To unjail your validator
 ```
-strided tx slashing unjail --chain-id $STRIDE_CHAIN_ID --from mykey --gas=auto -y
+junod tx slashing unjail --chain-id $JUNO_CHAIN_ID --from mykey --gas=auto -y
 ```
 
 ### 10. After you ensure your validator is producing blocks and is healthy you can shut down old validator server

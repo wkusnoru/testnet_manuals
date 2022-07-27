@@ -12,7 +12,7 @@
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/177221972-75fcf1b3-6e95-44dd-b43e-e32377685af8.png">
 </p>
 
-# stride node setup for mainnet — STRIDE
+# stride node setup for testnet — STRIDE
 
 Official documentation:
 >- [Validator setup instructions](https://github.com/Stride-Labs/testnet)
@@ -32,13 +32,13 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
  - 4x CPUs; the faster clock speed the better
  - 8GB RAM
  - 100GB of storage (SSD or NVME)
- - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
 ### Recommended Hardware Requirements 
  - 4x CPUs; the faster clock speed the better
  - 32GB RAM
  - 200GB of storage (SSD or NVME)
- - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
 ## Set up your stride fullnode
 ### Option 1 (automatic)
@@ -74,8 +74,8 @@ sudo rm -rf $HOME/.stride/data/tx_index.db
 ### (OPTIONAL) State Sync
 You can state sync your node in minutes by running commands below
 ```
-SNAP_RPC1="stride-node1.poolparty.stridenet.co:26657" \
-&& SNAP_RPC2="stride-node1.poolparty.stridenet.co:26657"
+SNAP_RPC1="https://stride-library.poolparty.stridenet.co/" \
+&& SNAP_RPC2="https://stride-library.poolparty.stridenet.co/"
 LATEST_HEIGHT=$(curl -s $SNAP_RPC2/block | jq -r .result.block.header.height) \
 && BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)) \
 && TRUST_HASH=$(curl -s "$SNAP_RPC2/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
@@ -115,17 +115,12 @@ source $HOME/.bash_profile
 
 ### Fund your wallet
 In order to create validator first you need to fund your wallet with testnet tokens.
-To top up your wallet join [Stride discord server](https://discord.gg/97qe8u7t) and navigate to:
-- **#faucet** to request test tokens
+To top up your wallet join [Stride discord server](https://discord.gg/n6KrK77t) and navigate to:
+- **#token-faucet** to request test tokens
 
 To request a faucet grant:
 ```
-$faucet:<YOUR_WALLET_ADDRESS>
-```
-
-To check wallet balance:
-```
-$balance:<YOUR_WALLET_ADDRESS>
+$faucet-stride:<YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
