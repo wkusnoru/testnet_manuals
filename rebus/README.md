@@ -12,18 +12,18 @@
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/177221972-75fcf1b3-6e95-44dd-b43e-e32377685af8.png">
 </p>
 
-# stride node setup for mainnet — STRIDE
+# rebus node setup for mainnet — rebus
 
 Official documentation:
->- [Validator setup instructions](https://github.com/Stride-Labs/testnet)
+>- N/A
 
 Explorer:
->-  https://stride.explorers.guru
+>- N/A
 
 ## Usefull tools and references
-> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for stride validator](https://github.com/kj89/testnet_manuals/blob/main/stride/monitoring/README.md)
+> To set up monitoring for your validator node navigate to [Set up monitoring and alerting for rebus validator](https://github.com/kj89/testnet_manuals/blob/main/rebus/monitoring/README.md)
 >
-> To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/stride/migrate_validator.md)
+> To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/rebus/migrate_validator.md)
 
 ## Hardware Requirements
 Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
@@ -40,15 +40,15 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
  - 200GB of storage (SSD or NVME)
  - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
-## Set up your stride fullnode
+## Set up your rebus fullnode
 ### Option 1 (automatic)
-You can setup your stride fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
+You can setup your rebus fullnode in few minutes by using automated script below. It will prompt you to input your validator node name!
 ```
-wget -O stride.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/stride/stride.sh && chmod +x stride.sh && ./stride.sh
+wget -O rebus.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/rebus/rebus.sh && chmod +x rebus.sh && ./rebus.sh
 ```
 
 ### Option 2 (manual)
-You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/stride/manual_install.md) if you better prefer setting up node manually
+You can follow [manual guide](https://github.com/kj89/testnet_manuals/blob/main/rebus/manual_install.md) if you better prefer setting up node manually
 
 ## Post installation
 
@@ -59,63 +59,53 @@ source $HOME/.bash_profile
 
 Next you have to make sure your validator is syncing blocks. You can use command below to check synchronization status
 ```
-strided status 2>&1 | jq .SyncInfo
+rebusd status 2>&1 | jq .SyncInfo
 ```
 
 ### (OPTIONAL) Disable and cleanup indexing
 ```
 indexer="null"
-sed -i -e "s/^indexer *=.*/indexer = \"$indexer\"/" $HOME/.stride/config/config.toml
-sudo systemctl restart strided
+sed -i -e "s/^indexer *=.*/indexer = \"$indexer\"/" $HOME/.rebusd/config/config.toml
+sudo systemctl restart rebusd
 sleep 3
-sudo rm -rf $HOME/.stride/data/tx_index.db
+sudo rm -rf $HOME/.rebusd/data/tx_index.db
 ```
 
 ### (OPTIONAL) State Sync
 You can state sync your node in minutes by running commands below
 ```
-SNAP_RPC1="stride-node1.poolparty.stridenet.co:26657" \
-&& SNAP_RPC2="stride-node1.poolparty.stridenet.co:26657"
-LATEST_HEIGHT=$(curl -s $SNAP_RPC2/block | jq -r .result.block.header.height) \
-&& BLOCK_HEIGHT=$((LATEST_HEIGHT - 2000)) \
-&& TRUST_HASH=$(curl -s "$SNAP_RPC2/block?height=$BLOCK_HEIGHT" | jq -r .result.block_id.hash)
-sed -i.bak -E "s|^(enable[[:space:]]+=[[:space:]]+).*$|\1true| ; \
-s|^(rpc_servers[[:space:]]+=[[:space:]]+).*$|\1\"$SNAP_RPC1,$SNAP_RPC2\"| ; \
-s|^(trust_height[[:space:]]+=[[:space:]]+).*$|\1$BLOCK_HEIGHT| ; \
-s|^(trust_hash[[:space:]]+=[[:space:]]+).*$|\1\"$TRUST_HASH\"|" $HOME/.stride/config/config.toml
-strided tendermint unsafe-reset-all --home $HOME/.stride
-sudo systemctl restart strided && journalctl -fu strided -o cat
+N/A
 ```
 
 ### Create wallet
 To create new wallet you can use command below. Don’t forget to save the mnemonic
 ```
-strided keys add $WALLET
+rebusd keys add $WALLET
 ```
 
 (OPTIONAL) To recover your wallet using seed phrase
 ```
-strided keys add $WALLET --recover
+rebusd keys add $WALLET --recover
 ```
 
 To get current list of wallets
 ```
-strided keys list
+rebusd keys list
 ```
 
 ### Save wallet info
 Add wallet and valoper address into variables 
 ```
-STRIDE_WALLET_ADDRESS=$(strided keys show $WALLET -a)
-STRIDE_VALOPER_ADDRESS=$(strided keys show $WALLET --bech val -a)
-echo 'export STRIDE_WALLET_ADDRESS='${STRIDE_WALLET_ADDRESS} >> $HOME/.bash_profile
-echo 'export STRIDE_VALOPER_ADDRESS='${STRIDE_VALOPER_ADDRESS} >> $HOME/.bash_profile
+REBUS_WALLET_ADDRESS=$(rebusd keys show $WALLET -a)
+REBUS_VALOPER_ADDRESS=$(rebusd keys show $WALLET --bech val -a)
+echo 'export REBUS_WALLET_ADDRESS='${REBUS_WALLET_ADDRESS} >> $HOME/.bash_profile
+echo 'export REBUS_VALOPER_ADDRESS='${REBUS_VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
 ### Fund your wallet
 In order to create validator first you need to fund your wallet with testnet tokens.
-To top up your wallet join [Stride discord server](https://discord.gg/97qe8u7t) and navigate to:
+To top up your wallet join [rebus discord server](https://discord.gg/97qe8u7t) and navigate to:
 - **#faucet** to request test tokens
 
 To request a faucet grant:
@@ -133,49 +123,49 @@ Before creating validator please make sure that you have at least 1 strd (1 strd
 
 To check your wallet balance:
 ```
-strided query bank balances $STRIDE_WALLET_ADDRESS
+rebusd query bank balances $REBUS_WALLET_ADDRESS
 ```
 > If your wallet does not show any balance than probably your node is still syncing. Please wait until it finish to synchronize and then continue 
 
 To create your validator run command below
 ```
-strided tx staking create-validator \
+rebusd tx staking create-validator \
   --amount 10000000ustrd \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
   --commission-rate "0.07" \
   --min-self-delegation "1" \
-  --pubkey  $(strided tendermint show-validator) \
+  --pubkey  $(rebusd tendermint show-validator) \
   --moniker $NODENAME \
-  --chain-id $STRIDE_CHAIN_ID
+  --chain-id $REBUS_CHAIN_ID
 ```
 
 ## Operations with liquid stake
 ### Add liquid stake 
-Liquid stake your ATOM on Stride for stATOM. Here's an example of how to liquid stake
+Liquid stake your ATOM on rebus for stATOM. Here's an example of how to liquid stake
 ```
-strided tx stakeibc liquid-stake 1000 uatom --from $WALLET --chain-id $STRIDE_CHAIN_ID
+rebusd tx stakeibc liquid-stake 1000 uatom --from $WALLET --chain-id $REBUS_CHAIN_ID
 ```
 > Note: if you liquid stake 1000 uatom, you might only get 990 (could be more or less) stATOM in return! This is due to the way our exchange rate works. Your 990 stATOM are still worth 1000 uatom (or more, as you accrue staking rewards!)
 
 ### Redeem stake
 After accruing some staking rewards, you can unstake your tokens. Currently, the unbonding period on our Gaia (Cosmos Hub) testnet is around 30 minutes.
 ```
-strided tx stakeibc redeem-stake 999 GAIA <cosmos_address_you_want_to_redeem_to> --chain-id $STRIDE_CHAIN_ID --from $WALLET
+rebusd tx stakeibc redeem-stake 999 GAIA <cosmos_address_you_want_to_redeem_to> --chain-id $REBUS_CHAIN_ID --from $WALLET
 ```
 
 ### Check if tokens are claimable
-If you'd like to see whether your tokens are ready to be claimed, look for your `UserRedemptionRecord` keyed by `<your_stride_account>`. 
+If you'd like to see whether your tokens are ready to be claimed, look for your `UserRedemptionRecord` keyed by `<your_REBUS_account>`. 
 ```
-strided q records list-user-redemption-record --output json | jq --arg WALLET_ADDRESS "$STRIDE_WALLET_ADDRESS" '.UserRedemptionRecord | map(select(.sender == $WALLET_ADDRESS))'
+rebusd q records list-user-redemption-record --output json | jq --arg WALLET_ADDRESS "$REBUS_WALLET_ADDRESS" '.UserRedemptionRecord | map(select(.sender == $WALLET_ADDRESS))'
 ```
 If your record has the attribute `isClaimable=true`, they're ready to be claimed!
 
 ### Claim tokens
 After your tokens have unbonded, they can be claimed by triggering the claim process. 
 ```
-strided tx stakeibc claim-undelegated-tokens GAIA 5 --chain-id $STRIDE_CHAIN_ID --from $WALLET
+rebusd tx stakeibc claim-undelegated-tokens GAIA 5 --chain-id $REBUS_CHAIN_ID --from $WALLET
 ```
 > Note: this function triggers claims in a FIFO queue, meaning if your claim is 20th in line, you'll have process other claims before seeing your tokens appear in your account.
 
@@ -197,159 +187,159 @@ sudo ufw default allow outgoing
 sudo ufw default deny incoming
 sudo ufw allow ssh/tcp
 sudo ufw limit ssh/tcp
-sudo ufw allow ${STRIDE_PORT}656,${STRIDE_PORT}660/tcp
+sudo ufw allow ${REBUS_PORT}656,${REBUS_PORT}660/tcp
 sudo ufw enable
 ```
 
 ## Monitoring
-To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for stride validator](https://github.com/kj89/testnet_manuals/blob/main/stride/monitoring/README.md)
+To monitor and get alerted about your validator health status you can use my guide on [Set up monitoring and alerting for rebus validator](https://github.com/kj89/testnet_manuals/blob/main/rebus/monitoring/README.md)
 
 ## Calculate synchronization time
 This script will help you to estimate how much time it will take to fully synchronize your node\
 It measures average blocks per minute that are being synchronized for period of 5 minutes and then gives you results
 ```
-wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/stride/tools/synctime.py && python3 ./synctime.py
+wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/rebus/tools/synctime.py && python3 ./synctime.py
 ```
 
 ### Check your validator key
 ```
-[[ $(strided q staking validator $STRIDE_VALOPER_ADDRESS -oj | jq -r .consensus_pubkey.key) = $(strided status | jq -r .ValidatorInfo.PubKey.value) ]] && echo -e "\n\e[1m\e[32mTrue\e[0m\n" || echo -e "\n\e[1m\e[31mFalse\e[0m\n"
+[[ $(rebusd q staking validator $REBUS_VALOPER_ADDRESS -oj | jq -r .consensus_pubkey.key) = $(rebusd status | jq -r .ValidatorInfo.PubKey.value) ]] && echo -e "\n\e[1m\e[32mTrue\e[0m\n" || echo -e "\n\e[1m\e[31mFalse\e[0m\n"
 ```
 
 ### Get list of validators
 ```
-strided q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
+rebusd q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
 ```
 
 ## Get currently connected peer list with ids
 ```
-curl -sS http://localhost:${STRIDE_PORT}657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
+curl -sS http://localhost:${REBUS_PORT}657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
 ```
 
 ## Usefull commands
 ### Service management
 Check logs
 ```
-journalctl -fu strided -o cat
+journalctl -fu rebusd -o cat
 ```
 
 Start service
 ```
-sudo systemctl start strided
+sudo systemctl start rebusd
 ```
 
 Stop service
 ```
-sudo systemctl stop strided
+sudo systemctl stop rebusd
 ```
 
 Restart service
 ```
-sudo systemctl restart strided
+sudo systemctl restart rebusd
 ```
 
 ### Node info
 Synchronization info
 ```
-strided status 2>&1 | jq .SyncInfo
+rebusd status 2>&1 | jq .SyncInfo
 ```
 
 Validator info
 ```
-strided status 2>&1 | jq .ValidatorInfo
+rebusd status 2>&1 | jq .ValidatorInfo
 ```
 
 Node info
 ```
-strided status 2>&1 | jq .NodeInfo
+rebusd status 2>&1 | jq .NodeInfo
 ```
 
 Show node id
 ```
-strided tendermint show-node-id
+rebusd tendermint show-node-id
 ```
 
 ### Wallet operations
 List of wallets
 ```
-strided keys list
+rebusd keys list
 ```
 
 Recover wallet
 ```
-strided keys add $WALLET --recover
+rebusd keys add $WALLET --recover
 ```
 
 Delete wallet
 ```
-strided keys delete $WALLET
+rebusd keys delete $WALLET
 ```
 
 Get wallet balance
 ```
-strided query bank balances $STRIDE_WALLET_ADDRESS
+rebusd query bank balances $REBUS_WALLET_ADDRESS
 ```
 
 Transfer funds
 ```
-strided tx bank send $STRIDE_WALLET_ADDRESS <TO_STRIDE_WALLET_ADDRESS> 10000000ustrd
+rebusd tx bank send $REBUS_WALLET_ADDRESS <TO_REBUS_WALLET_ADDRESS> 10000000ustrd
 ```
 
 ### Voting
 ```
-strided tx gov vote 1 yes --from $WALLET --chain-id=$STRIDE_CHAIN_ID
+rebusd tx gov vote 1 yes --from $WALLET --chain-id=$REBUS_CHAIN_ID
 ```
 
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-strided tx staking delegate $STRIDE_VALOPER_ADDRESS 10000000ustrd --from=$WALLET --chain-id=$STRIDE_CHAIN_ID --gas=auto
+rebusd tx staking delegate $REBUS_VALOPER_ADDRESS 10000000ustrd --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-strided tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ustrd --from=$WALLET --chain-id=$STRIDE_CHAIN_ID --gas=auto
+rebusd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ustrd --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
 ```
-strided tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$STRIDE_CHAIN_ID --gas=auto
+rebusd tx distribution withdraw-all-rewards --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Withdraw rewards with commision
 ```
-strided tx distribution withdraw-rewards $STRIDE_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$STRIDE_CHAIN_ID
+rebusd tx distribution withdraw-rewards $REBUS_VALOPER_ADDRESS --from=$WALLET --commission --chain-id=$REBUS_CHAIN_ID
 ```
 
 ### Validator management
 Edit validator
 ```
-strided tx staking edit-validator \
+rebusd tx staking edit-validator \
   --moniker=$NODENAME \
   --identity=<your_keybase_id> \
   --website="<your_website>" \
   --details="<your_validator_description>" \
-  --chain-id=$STRIDE_CHAIN_ID \
+  --chain-id=$REBUS_CHAIN_ID \
   --from=$WALLET
 ```
 
 Unjail validator
 ```
-strided tx slashing unjail \
+rebusd tx slashing unjail \
   --broadcast-mode=block \
   --from=$WALLET \
-  --chain-id=$STRIDE_CHAIN_ID \
+  --chain-id=$REBUS_CHAIN_ID \
   --gas=auto
 ```
 
 ### Delete node
 This commands will completely remove node from server. Use at your own risk!
 ```
-sudo systemctl stop strided
-sudo systemctl disable strided
-sudo rm /etc/systemd/system/stride* -rf
-sudo rm $(which strided) -rf
-sudo rm $HOME/.stride* -rf
-sudo rm $HOME/stride -rf
-sed -i '/STRIDE_/d' ~/.bash_profile
+sudo systemctl stop rebusd
+sudo systemctl disable rebusd
+sudo rm /etc/systemd/system/rebus* -rf
+sudo rm $(which rebusd) -rf
+sudo rm $HOME/.rebusd* -rf
+sudo rm $HOME/rebus -rf
+sed -i '/REBUS_/d' ~/.bash_profile
 ```

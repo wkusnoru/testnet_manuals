@@ -12,10 +12,10 @@
   <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/167032367-fee4380e-7678-43e0-9206-36d72b32b8ae.png">
 </p>
 
-# agoric node setup for testnet — agoric-emerynet-1
+# agoric node setup for testnet — agoric-emerynet-2
 
 Explorer:
-> https://ollinet.explorer.agoric.net/
+> https://emerynet.explorer.agoric.net/
 
 ## Usefull tools and references
 > To set up monitoring for your validator node navigate to [Set up monitoring and alerting for agoric validator](https://github.com/kj89/testnet_manuals/blob/main/agoric/monitoring/README.md)
@@ -60,22 +60,21 @@ ag0 keys list
 ```
 
 ### Save wallet info
-Add wallet address
+Load wallet and valoper variables into system
 ```
 WALLET_ADDRESS=$(ag0 keys show $WALLET -a)
-```
-
-Add valoper address
-```
 VALOPER_ADDRESS=$(ag0 keys show $WALLET --bech val -a)
-```
-
-Load variables into system
-```
 echo 'export WALLET_ADDRESS='${WALLET_ADDRESS} >> $HOME/.bash_profile
 echo 'export VALOPER_ADDRESS='${VALOPER_ADDRESS} >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
+
+### Fund your wallet
+In order to create validator first you need to fund your wallet with testnet tokens.
+To top up your wallet:
+- navigate to https://emerynet.faucet.agoric.net/
+- input your <YOUR_WALLET_ADDRESS>
+- check `delegate` and press `Submit` button
 
 ### Create validator
 Before creating validator please make sure that you have at least 1 bld (1 bld is equal to 1000000 ubld) and your node is synchronized
@@ -89,7 +88,7 @@ ag0 query bank balances $WALLET_ADDRESS
 To create your validator run command below
 ```
 ag0 tx staking create-validator \
-  --amount 1000000ubld \
+  --amount 75000000ubld \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
@@ -132,6 +131,11 @@ It measures average blocks per minute that are being synchronized for period of 
 wget -O synctime.py https://raw.githubusercontent.com/kj89/testnet_manuals/main/agoric/tools/synctime.py && python3 ./synctime.py
 ```
 
+### Get list of validators
+```
+ag0 q staking validators -oj --limit=3000 | jq '.validators[] | select(.status=="BOND_STATUS_BONDED")' | jq -r '(.tokens|tonumber/pow(10; 6)|floor|tostring) + " \t " + .description.moniker' | sort -gr | nl
+```
+
 ## Get currently connected peer list with ids
 ```
 curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_info.id)@\(.remote_ip):\(.node_info.listen_addr)"' | awk -F ':' '{print $1":"$(NF)}'
@@ -141,22 +145,22 @@ curl -sS http://localhost:26657/net_info | jq -r '.result.peers[] | "\(.node_inf
 ### Service management
 Check logs
 ```
-journalctl -fu ag0 -o cat
+journalctl -fu agoricd -o cat
 ```
 
 Start service
 ```
-systemctl start ag0
+systemctl start agoricd
 ```
 
 Stop service
 ```
-systemctl stop ag0
+systemctl stop agoricd
 ```
 
 Restart service
 ```
-systemctl restart ag0
+systemctl restart agoricd
 ```
 
 ### Node info

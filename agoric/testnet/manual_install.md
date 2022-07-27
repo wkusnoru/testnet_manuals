@@ -39,18 +39,23 @@ sudo apt install curl tar wget clang pkg-config libssl-dev jq build-essential bs
 ## Save and import variables into system
 ```
 echo "export NODENAME=$NODENAME" >> $HOME/.bash_profile
-echo "export WALLET=wallet" >> $HOME/.bash_profile
+if [ ! $WALLET ]; then
+	echo "export WALLET=wallet" >> $HOME/.bash_profile
+fi
 echo "export CHAIN_ID=$(jq -r .chainName < $HOME/chain.json)" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
 ## Install node.js
 ```
+if ! [ -x "$(command -v node)" ]; then
 curl https://deb.nodesource.com/setup_14.x | sudo bash
 curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key add -
 echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
 sudo apt update && sudo apt upgrade -y
 sudo apt install nodejs=14.* yarn build-essential jq -y
+sleep 1
+fi
 ```
 
 ## Install go
@@ -97,8 +102,7 @@ curl https://emerynet.rpc.agoric.net/genesis | jq .result.genesis > $HOME/.agori
 ```
 PEERS=$(jq '.peers | join(",")' < $HOME/chain.json)
 SEEDS=$(jq '.seeds | join(",")' < $HOME/chain.json)
-PEERS="686de39b047e38db41b42cf676eb68335d81fca7@139.59.146.53:27656,ca166d3c56c6cf05c3e9ebb6a170a6986eead9a0@34.130.175.164:26656,32f7fbecd40b420d592ac460703c4ac647875566@65.109.23.238:26656,6322a00ac7f59b393681d824a61a970a79d066e6@162.55.169.76:26656,4738ce5158849c219c25a4fa7d64abfd1f4f31bb@65.109.23.46:26656,f48024436fcdf9e3199106ec6d6624d6089de378@97.122.229.225:44656,528bb854342f9906c039811cdf7d542bb262e929@35.226.248.0:26656,14dcf9ee440ed783cd321bed9523117e2d4afde1@167.86.104.139:26656"
-sed -i -e "s/^seeds *=.*/seeds = \"$SEEDS\"/; s/^persistent_peers *=.*/persistent_peers = \"$PEERS\"/" $HOME/.agoric/config/config.toml
+sed -i -e "s/^seeds *=.*/seeds = $SEEDS/; s/^persistent_peers *=.*/persistent_peers = $PEERS/" $HOME/.agoric/config/config.toml
 ```
 
 # Fix `Error: failed to parse log level`
