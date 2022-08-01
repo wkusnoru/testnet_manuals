@@ -16,8 +16,9 @@
 
 ## Set up vars
 ```
-CHAIN_NAME=dws
-API_PORT=14317
+CHAIN_NAME=stride-testnet
+API_PORT=16317
+RPC_PORT=16657
 ```
 
 ## Update packages
@@ -54,11 +55,29 @@ server {
         }
 }
 EOF
+sudo ln -s /etc/nginx/sites-available/${CHAIN_NAME}.api.kjnodes.com.conf /etc/nginx/sites-enabled/${CHAIN_NAME}.api.kjnodes.com.conf
 ```
 
-## Make a symlink
+## Set up config
 ```
-sudo ln -s /etc/nginx/sites-available/${CHAIN_NAME}.api.kjnodes.com.conf /etc/nginx/sites-enabled/${CHAIN_NAME}.api.kjnodes.com.conf
+sudo tee /etc/nginx/sites-available/${CHAIN_NAME}.rpc.kjnodes.com.conf > /dev/null <<EOF
+server {
+        listen 80;
+        listen [::]:80;
+
+        server_name ${CHAIN_NAME}.rpc.kjnodes.com;
+
+        location / {
+
+                add_header Access-Control-Allow-Origin *;
+                add_header Access-Control-Max-Age 3600;
+                add_header Access-Control-Expose-Headers Content-Length;
+
+                proxy_pass http://127.0.0.1:${RPC_PORT};
+        }
+}
+EOF
+sudo ln -s /etc/nginx/sites-available/${CHAIN_NAME}.rpc.kjnodes.com.conf /etc/nginx/sites-enabled/${CHAIN_NAME}.rpc.kjnodes.com.conf
 ```
 
 ## Reload nginx
