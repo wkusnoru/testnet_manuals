@@ -9,16 +9,16 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/177221972-75fcf1b3-6e95-44dd-b43e-e32377685af8.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/182218818-f686aebb-6e48-47e1-96a2-e0d8faf44acb.png">
 </p>
 
-# rebus node setup for mainnet — rebus
+# rebus node setup for testnet — reb_3333-1
 
 Official documentation:
->- N/A
+>- https://github.com/rebuschain/rebus.testnet/tree/master/rebus_3333-1
 
 Explorer:
->- N/A
+>- https://explorer.kjnodes.com/REBUS
 
 ## Usefull tools and references
 > To set up monitoring for your validator node navigate to [Set up monitoring and alerting for rebus validator](https://github.com/kj89/testnet_manuals/blob/main/rebus/monitoring/README.md)
@@ -32,13 +32,13 @@ Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
  - 4x CPUs; the faster clock speed the better
  - 8GB RAM
  - 100GB of storage (SSD or NVME)
- - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
 ### Recommended Hardware Requirements 
  - 4x CPUs; the faster clock speed the better
  - 32GB RAM
  - 200GB of storage (SSD or NVME)
- - Permanent Internet connection (traffic will be minimal during mainnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
+ - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
 ## Set up your rebus fullnode
 ### Option 1 (automatic)
@@ -119,7 +119,7 @@ $balance:<YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
-Before creating validator please make sure that you have at least 1 strd (1 strd is equal to 1000000 ustrd) and your node is synchronized
+Before creating validator please make sure that you have at least 1 strd (1 strd is equal to 1000000 arebus) and your node is synchronized
 
 To check your wallet balance:
 ```
@@ -130,7 +130,7 @@ rebusd query bank balances $REBUS_WALLET_ADDRESS
 To create your validator run command below
 ```
 rebusd tx staking create-validator \
-  --amount 10000000ustrd \
+  --amount 10000000arebus \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
@@ -282,7 +282,7 @@ rebusd query bank balances $REBUS_WALLET_ADDRESS
 
 Transfer funds
 ```
-rebusd tx bank send $REBUS_WALLET_ADDRESS <TO_REBUS_WALLET_ADDRESS> 10000000ustrd
+rebusd tx bank send $REBUS_WALLET_ADDRESS <TO_REBUS_WALLET_ADDRESS> 10000000arebus
 ```
 
 ### Voting
@@ -293,12 +293,12 @@ rebusd tx gov vote 1 yes --from $WALLET --chain-id=$REBUS_CHAIN_ID
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-rebusd tx staking delegate $REBUS_VALOPER_ADDRESS 10000000ustrd --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
+rebusd tx staking delegate $REBUS_VALOPER_ADDRESS 10000000arebus --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-rebusd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000ustrd --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
+rebusd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000arebus --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
