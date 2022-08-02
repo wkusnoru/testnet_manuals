@@ -25,18 +25,9 @@ Explorer:
 >
 > To migrate your validator to another machine read [Migrate your validator to another machine](https://github.com/kj89/testnet_manuals/blob/main/rebus/migrate_validator.md)
 
-## Hardware Requirements
-Like any Cosmos-SDK chain, the hardware requirements are pretty modest.
-
-### Minimum Hardware Requirements
- - 4x CPUs; the faster clock speed the better
- - 8GB RAM
- - 100GB of storage (SSD or NVME)
- - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
-
-### Recommended Hardware Requirements 
- - 4x CPUs; the faster clock speed the better
- - 32GB RAM
+## Recommended Hardware Requirements 
+ - 2x CPUs; the faster clock speed the better
+ - 16GB RAM
  - 200GB of storage (SSD or NVME)
  - Permanent Internet connection (traffic will be minimal during testnet; 10Mbps will be plenty - for production at least 100Mbps is expected)
 
@@ -105,21 +96,21 @@ source $HOME/.bash_profile
 
 ### Fund your wallet
 In order to create validator first you need to fund your wallet with testnet tokens.
-To top up your wallet join [rebus discord server](https://discord.gg/97qe8u7t) and navigate to:
+To top up your wallet join [rebus discord server](https://discord.gg/TEMPynVy) and navigate to:
 - **#faucet** to request test tokens
 
 To request a faucet grant:
 ```
-$faucet:<YOUR_WALLET_ADDRESS>
+$request <YOUR_WALLET_ADDRESS>
 ```
 
 To check wallet balance:
 ```
-$balance:<YOUR_WALLET_ADDRESS>
+$balance <YOUR_WALLET_ADDRESS>
 ```
 
 ### Create validator
-Before creating validator please make sure that you have at least 1 strd (1 strd is equal to 1000000 arebus) and your node is synchronized
+Before creating validator please make sure that you have at least 1 rebus (1 rebus is equal to 1000000000000000000 arebus) and your node is synchronized
 
 To check your wallet balance:
 ```
@@ -130,7 +121,7 @@ rebusd query bank balances $REBUS_WALLET_ADDRESS
 To create your validator run command below
 ```
 rebusd tx staking create-validator \
-  --amount 10000000arebus \
+  --amount 1000000000000000000arebus \
   --from $WALLET \
   --commission-max-change-rate "0.01" \
   --commission-max-rate "0.2" \
@@ -140,34 +131,6 @@ rebusd tx staking create-validator \
   --moniker $NODENAME \
   --chain-id $REBUS_CHAIN_ID
 ```
-
-## Operations with liquid stake
-### Add liquid stake 
-Liquid stake your ATOM on rebus for stATOM. Here's an example of how to liquid stake
-```
-rebusd tx stakeibc liquid-stake 1000 uatom --from $WALLET --chain-id $REBUS_CHAIN_ID
-```
-> Note: if you liquid stake 1000 uatom, you might only get 990 (could be more or less) stATOM in return! This is due to the way our exchange rate works. Your 990 stATOM are still worth 1000 uatom (or more, as you accrue staking rewards!)
-
-### Redeem stake
-After accruing some staking rewards, you can unstake your tokens. Currently, the unbonding period on our Gaia (Cosmos Hub) testnet is around 30 minutes.
-```
-rebusd tx stakeibc redeem-stake 999 GAIA <cosmos_address_you_want_to_redeem_to> --chain-id $REBUS_CHAIN_ID --from $WALLET
-```
-
-### Check if tokens are claimable
-If you'd like to see whether your tokens are ready to be claimed, look for your `UserRedemptionRecord` keyed by `<your_REBUS_account>`. 
-```
-rebusd q records list-user-redemption-record --output json | jq --arg WALLET_ADDRESS "$REBUS_WALLET_ADDRESS" '.UserRedemptionRecord | map(select(.sender == $WALLET_ADDRESS))'
-```
-If your record has the attribute `isClaimable=true`, they're ready to be claimed!
-
-### Claim tokens
-After your tokens have unbonded, they can be claimed by triggering the claim process. 
-```
-rebusd tx stakeibc claim-undelegated-tokens GAIA 5 --chain-id $REBUS_CHAIN_ID --from $WALLET
-```
-> Note: this function triggers claims in a FIFO queue, meaning if your claim is 20th in line, you'll have process other claims before seeing your tokens appear in your account.
 
 ## Security
 To protect you keys please make sure you follow basic security rules
@@ -282,7 +245,7 @@ rebusd query bank balances $REBUS_WALLET_ADDRESS
 
 Transfer funds
 ```
-rebusd tx bank send $REBUS_WALLET_ADDRESS <TO_REBUS_WALLET_ADDRESS> 10000000arebus
+rebusd tx bank send $REBUS_WALLET_ADDRESS <TO_REBUS_WALLET_ADDRESS> 1000000000000000000arebus
 ```
 
 ### Voting
@@ -293,12 +256,12 @@ rebusd tx gov vote 1 yes --from $WALLET --chain-id=$REBUS_CHAIN_ID
 ### Staking, Delegation and Rewards
 Delegate stake
 ```
-rebusd tx staking delegate $REBUS_VALOPER_ADDRESS 10000000arebus --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
+rebusd tx staking delegate $REBUS_VALOPER_ADDRESS 1000000000000000000arebus --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Redelegate stake from validator to another validator
 ```
-rebusd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 10000000arebus --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
+rebusd tx staking redelegate <srcValidatorAddress> <destValidatorAddress> 1000000000000000000arebus --from=$WALLET --chain-id=$REBUS_CHAIN_ID --gas=auto
 ```
 
 Withdraw all rewards
