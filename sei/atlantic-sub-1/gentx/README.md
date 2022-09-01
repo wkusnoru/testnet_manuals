@@ -14,10 +14,10 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/182218818-f686aebb-6e48-47e1-96a2-e0d8faf44acb.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/169664551-39020c2e-fa95-483b-916b-c52ce4cb907c.png">
 </p>
 
-# Generate rebus mainnet gentx
+# Generate Gentx for sei atlantic-sub-1
 
 ## Setting up vars
 Here you have to put name of your moniker (validator) that will be visible in explorer
@@ -29,7 +29,7 @@ Save and import variables into system
 ```
 echo "export NODENAME=$NODENAME" >> $HOME/.bash_profile
 echo "export WALLET=wallet" >> $HOME/.bash_profile
-echo "export CHAIN_ID=reb_1111-1" >> $HOME/.bash_profile
+echo "export CHAIN_ID=atlantic-sub-1" >> $HOME/.bash_profile
 source $HOME/.bash_profile
 ```
 
@@ -58,57 +58,63 @@ source ~/.bash_profile
 ## Download and install binaries
 ```
 cd $HOME
-git clone https://github.com/rebuschain/rebus.core.git 
-cd rebus.core && git checkout master
+git clone https://github.com/sei-protocol/sei-chain.git && cd $HOME/sei-chain
+git checkout 1.1.2beta-internal
 make install
 ```
 
 ## Config app
 ```
-rebusd config chain-id $CHAIN_ID
-rebusd config keyring-backend test
+seid config chain-id $CHAIN_ID
+seid config keyring-backend test
 ```
 
 ## Init node
 ```
-rebusd init $NODENAME --chain-id $CHAIN_ID
+seid init $NODENAME --chain-id $CHAIN_ID
 ```
 
-## Recover or create new wallet for mainnet
+## Recover or create new wallet for Incentivized testnet
+> ! If you are generating new wallet please don't forget to write down your 24-word mnemonic !
+
 Option 1 - generate new wallet
 ```
-rebusd keys add $WALLET --coin-type 118 --algo secp256k1
+seid keys add $WALLET
 ```
 
 Option 2 - recover existing wallet
 ```
-rebusd keys add $WALLET --recover --coin-type 118 --algo secp256k1
+seid keys add $WALLET --recover
 ```
 
 ## Add genesis account
 ```
-WALLET_ADDRESS=$(rebusd keys show $WALLET -a)
-rebusd add-genesis-account $WALLET_ADDRESS 100rebus
+WALLET_ADDRESS=$(seid keys show $WALLET -a)
+seid add-genesis-account $WALLET_ADDRESS 10000000usei
 ```
 
 ## Generate gentx
+Please fill up `<your_validator_description>`, `<your_email>` and `<your_website>` with your own values
 ```
-rebusd gentx $WALLET 100000000000000000000arebus \
+seid gentx $WALLET 10000000usei \
 --chain-id $CHAIN_ID \
 --moniker=$NODENAME \
+--commission-max-change-rate=0.01 \
+--commission-max-rate=0.20 \
 --commission-rate=0.05 \
---commission-max-rate=0.2 \
---commission-max-change-rate=0.01
+--details="<your_validator_description>" \
+--security-contact="<your_email>" \
+--website="<your_website>"
 ```
 
 ## Things you have to backup
 - `24 word mnemonic` of your generated wallet
-- contents of `$HOME/.rebusd/config/*`
+- contents of `$HOME/.sei/config/*`
 
 ## Submit PR with Gentx
-1. Copy the contents of ${HOME}/.rebusd/config/gentx/gentx-XXXXXXXX.json.
-2. Fork https://github.com/rebuschain/rebus.mainnet
-3. Create a file `<VALIDATOR_NAME>.json` under the `reb_1111-1/gentxs/` folder in the forked repo, paste the copied text into the file.
+1. Copy the contents of `$HOME/.sei/config/gentx/gentx-XXXXXXXX.json`
+2. Fork https://github.com/sei-protocol/testnet
+3. Create a file `{VALIDATOR_NAME}.json` under the `testnet/atlantic-subchains/atlantic-sub-1/gentx` folder in the forked repo, paste the copied text into the file.
 4. Create a Pull Request to the main branch of the repository
 
 ### Await further instructions!
