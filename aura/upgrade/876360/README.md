@@ -15,29 +15,27 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/167032367-fee4380e-7678-43e0-9206-36d72b32b8ae.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/177979901-4ac785e2-08c3-4d61-83df-b451a2ed9e68.png">
 </p>
 
-# Chain upgrade to agoric-upgrade-7
+# Chain upgrade to commit euphoria_v0.3.1
 ## (OPTION 1) Manual upgrade
 Once the chain reaches the upgrade height, you will encounter the following panic error message:\
-`ERR UPGRADE "agoric-upgrade-7" NEEDED at height: 146039`
+`ERR UPGRADE "xxx" NEEDED at height: 876360`
 ```
-sudo systemctl stop agoricd
-cd $HOME && rm $HOME/ag0 -rf
-git clone https://github.com/Agoric/ag0
-cd ag0
-git checkout agoric-upgrade-7
-make build
-cp $HOME/ag0/build/ag0 /usr/local/bin
-systemctl restart agoricd && journalctl -fu agoricd -o cat
+sudo systemctl stop aurad
+cd $HOME && rm -rf aura
+git clone https://github.com/aura-nw/aura.git && cd aura
+git checkout euphoria_v0.3.1
+make install
+sudo systemctl restart aurad && journalctl -fu aurad -o cat
 ```
 
-!!! DO NOT UPGRADE BEFORE CHAIN RECHES THE BLOCK `146039`!!!
+!!! DO NOT UPGRADE BEFORE CHAIN RECHES THE BLOCK `876360`!!!
 
 ### (OPTION 2) Automatic upgrade
 As an alternative we have prepared script that should update your binary when block height is reached
 Run this in a `screen` so it will not get stopped when session disconnected 😉
 ```
-wget -O agoric-upgrade-7.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/agoric/testnet/tools/agoric-upgrade-7.sh && chmod +x agoric-upgrade-7.sh && ./agoric-upgrade-7.sh
+wget -O upgrade.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/aura/upgrade/876360/upgrade.sh && chmod +x upgrade.sh && ./upgrade.sh
 ```

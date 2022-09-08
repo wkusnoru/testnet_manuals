@@ -15,28 +15,29 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/183283696-d1c4192b-f594-45bb-b589-15a5e57a795c.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/167032367-fee4380e-7678-43e0-9206-36d72b32b8ae.png">
 </p>
 
-# Chain upgrade to commit 90859d68d39b53333c303809ee0765add2e59dab
+# Chain upgrade to agoric-upgrade-7
 ## (OPTION 1) Manual upgrade
 Once the chain reaches the upgrade height, you will encounter the following panic error message:\
-`ERR UPGRADE "xxx" NEEDED at height: 70500`
+`ERR UPGRADE "agoric-upgrade-7" NEEDED at height: 146039`
 ```
-sudo systemctl stop strided
-cd $HOME && rm -rf stride
-git clone https://github.com/Stride-Labs/stride.git && cd stride
-git checkout 90859d68d39b53333c303809ee0765add2e59dab
+sudo systemctl stop agoricd
+cd $HOME && rm $HOME/ag0 -rf
+git clone https://github.com/Agoric/ag0
+cd ag0
+git checkout agoric-upgrade-7
 make build
-sudo mv build/strided $(which strided)
-sudo systemctl restart strided && journalctl -fu strided -o cat
+cp $HOME/ag0/build/ag0 /usr/local/bin
+systemctl restart agoricd && journalctl -fu agoricd -o cat
 ```
 
-!!! DO NOT UPGRADE BEFORE CHAIN RECHES THE BLOCK `70500`!!!
+!!! DO NOT UPGRADE BEFORE CHAIN RECHES THE BLOCK `146039`!!!
 
 ### (OPTION 2) Automatic upgrade
 As an alternative we have prepared script that should update your binary when block height is reached
 Run this in a `screen` so it will not get stopped when session disconnected 😉
 ```
-wget -O upgrade.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/stride/upgrade/70500/upgrade.sh && chmod +x upgrade.sh && ./upgrade.sh
+wget -O upgrade.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/agoric/emerynet/upgrade/146039/upgrade.sh && chmod +x upgrade.sh && ./upgrade.sh
 ```

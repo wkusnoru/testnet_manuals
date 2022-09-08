@@ -15,16 +15,31 @@
 </p>
 
 <p align="center">
-  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/183283696-d1c4192b-f594-45bb-b589-15a5e57a795c.png">
+  <img height="100" height="auto" src="https://user-images.githubusercontent.com/50621007/184189788-a617676f-fae9-43b4-89d3-e3ab779946f7.png">
 </p>
 
-# Delegate to another validator	
-To complete this task you will have to delegate some tokens to another validator
-
-## 1. Delegate 100000 ustrd to kjnodes validator
-Change `<WALLET>` to your wallet name from `strided keys list`
+# Chain upgrade to commit v1.7.0
+## (OPTION 1) Manual upgrade
+Once the chain reaches the upgrade height, you will encounter the following panic error message:\
+`ERR UPGRADE "xxx" NEEDED at height: 3608063`
 ```
-strided tx staking delegate stridevaloper1sxt4yssx5rqx3mqhsk6jraqeuja92ljl3ljv8y 100000ustrd --from=<WALLET> --chain-id=STRIDE-TESTNET-4 --gas=auto
+sudo systemctl stop gravityd
+cd $HOME
+rm gravity-bin -rf
+mkdir gravity-bin && cd gravity-bin
+wget -O gravityd https://github.com/Gravity-Bridge/Gravity-Bridge/releases/download/v1.7.0/gravity-linux-amd64
+wget -O gbt https://github.com/Gravity-Bridge/Gravity-Bridge/releases/download/v1.7.0/gbt
+chmod +x *
+sudo mv * /usr/bin/
+sudo systemctl restart gravityd
+sudo systemctl restart orchestrator
 ```
 
-## 2. Submit the transaction hash
+!!! DO NOT UPGRADE BEFORE CHAIN RECHES THE BLOCK `3608063`!!!
+
+### (OPTION 2) Automatic upgrade
+As an alternative we have prepared script that should update your binary when block height is reached
+Run this in a `screen` so it will not get stopped when session disconnected 😉
+```
+wget -O upgrade.sh https://raw.githubusercontent.com/kj89/testnet_manuals/main/gravity/upgrade/3608063/upgrade.sh && chmod +x upgrade.sh && ./upgrade.sh
+```
