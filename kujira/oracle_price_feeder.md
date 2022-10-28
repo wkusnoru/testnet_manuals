@@ -100,11 +100,22 @@ threshold = "2"
 
 [[currency_pairs]]
 base = "ATOM"
-providers = [
-  "binance",
-  "kraken",
-  "osmosis",
-]
+providers = ["binance", "kraken", "osmosis"]
+quote = "USD"
+
+[[currency_pairs]]
+base = "DOT"
+providers = ["binance", "kraken", "coinbase"]
+quote = "USD"
+
+[[currency_pairs]]
+base = "ETH"
+providers = ["binance", "kraken", "coinbase"]
+quote = "USD"
+
+[[currency_pairs]]
+base = "BTC"
+providers = ["binance", "kraken", "coinbase"]
 quote = "USD"
 
 [account]
